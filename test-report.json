@@ -1,0 +1,320 @@
+{
+  "timestamp": "2026-01-11T15:27:43.989Z",
+  "url": "https://ikm-juara-dashboard.vercel.app",
+  "totalTests": 10,
+  "passedTests": 9,
+  "failedTests": 1,
+  "successRate": 90,
+  "results": [
+    {
+      "test": "Homepage Load Test",
+      "success": false,
+      "status": 307,
+      "duration": 1451,
+      "response": "Redirecting...\n"
+    },
+    {
+      "test": "IKM Binaan API - GET",
+      "success": true,
+      "status": 200,
+      "duration": 1905,
+      "response": {
+        "success": true,
+        "data": [
+          {
+            "id": "1a33f89d-43c9-4f55-8731-61513bedf716",
+            "nib": "9999999999999",
+            "nik": "9999999999999999",
+            "nama_lengkap": "Test User Form Submission",
+            "alamat_lengkap": "Test Address",
+            "nama_usaha": "Test Business",
+            "nomor_hp": "081234567890",
+            "database_indicator": false,
+            "created_at": "2026-01-11T15:18:49.810208+00:00",
+            "updated_at": "2026-01-11T15:18:49.810208+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "e8d44eb5-2ebe-4e7e-8004-348ab4031566",
+            "nib": "1909210016219",
+            "nik": "3577034109740001",
+            "nama_lengkap": "HERLIN PURNAWATI",
+            "alamat_lengkap": "PERUM BUMIMAS BLOK SS NO 23 RT 58/RW 14 Kota Madiun",
+            "nama_usaha": "Makaroni LR",
+            "nomor_hp": "081259523395",
+            "database_indicator": true,
+            "created_at": "2026-01-11T11:14:41.198357+00:00",
+            "updated_at": "2026-01-11T11:15:11.006+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "b7b94399-0fbb-4c99-b14f-b831a7795de6",
+            "nib": "5678901234567",
+            "nik": "3573012345678905",
+            "nama_lengkap": "Eko Prasetyo",
+            "alamat_lengkap": "Jl. Ahmad Yani No. 654, Kelurahan Manisrejo, Kota Madiun",
+            "nama_usaha": "UD. Maju Jaya",
+            "nomor_hp": "081234567894",
+            "database_indicator": true,
+            "created_at": "2026-01-09T16:53:05.507394+00:00",
+            "updated_at": "2026-01-09T16:53:05.507394+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "c13c7934-378f-45d8-a2d1-17c1e6273f1b",
+            "nib": "3456789012345",
+            "nik": "3573012345678903",
+            "nama_lengkap": "Ahmad Wijaya",
+            "alamat_lengkap": "Jl. Sudirman No. 789, Kelurahan Oro-oro Ombo, Kota Madiun",
+            "nama_usaha": "PT. Maju Bersama",
+            "nomor_hp": "081234567892",
+            "database_indicator": true,
+            "created_at": "2026-01-09T16:53:05.507394+00:00",
+            "updated_at": "2026-01-09T16:53:05.507394+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "e78f628d-9dd7-4133-8fc4-4c940eadddd7",
+            "nib": "2345678901234",
+            "nik": "3573012345678902",
+            "nama_lengkap": "Siti Aminah",
+            "alamat_lengkap": "Jl. Pahlawan No. 456, Kelurahan Taman, Kota Madiun",
+            "nama_usaha": "UD. Berkah Jaya",
+            "nomor_hp": "081234567891",
+            "database_indicator": true,
+            "created_at": "2026-01-09T16:53:05.507394+00:00",
+            "updated_at": "2026-01-09T16:53:05.507394+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "6f55f01c-9b2e-4528-91ed-fcc2aec58f3f",
+            "nib": "4567890123456",
+            "nik": "3573012345678904",
+            "nama_lengkap": "Dewi Sartika",
+            "alamat_lengkap": "Jl. Diponegoro No. 321, Kelurahan Kartoharjo, Kota Madiun",
+            "nama_usaha": "CV. Berkah Mandiri",
+            "nomor_hp": "081234567893",
+            "database_indicator": true,
+            "created_at": "2026-01-09T16:53:05.507394+00:00",
+            "updated_at": "2026-01-09T16:53:05.507394+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "5743adff-40ae-4f74-9020-cb798931b7c7",
+            "nib": "1234567890123",
+            "nik": "3573012345678901",
+            "nama_lengkap": "Budi Santoso",
+            "alamat_lengkap": "Jl. Merdeka No. 123, Kelurahan Manguharjo, Kota Madiun",
+            "nama_usaha": "CV. Sumber Rejeki",
+            "nomor_hp": "081234567890",
+            "database_indicator": true,
+            "created_at": "2026-01-09T16:53:05.507394+00:00",
+            "updated_at": "2026-01-09T16:53:05.507394+00:00",
+            "deleted_at": null
+          }
+        ]
+      }
+    },
+    {
+      "test": "Jenis Pelatihan API - GET",
+      "success": true,
+      "status": 200,
+      "duration": 855,
+      "response": {
+        "success": true,
+        "data": [
+          {
+            "id": "9cd07adc-79d3-4bb3-a286-cf559b2a2df7",
+            "jenis_pelatihan": "Digital Marketing untuk UMKM",
+            "sub_kegiatan": "Pemasaran Online dan Media Sosial",
+            "waktu_pelaksanaan": "2024-01-15 09:00:00",
+            "tempat": "Aula DisnakerKUKM Kota Madiun",
+            "link_materi": null,
+            "tahun_pelaksanaan": 2024,
+            "status": "Aktif",
+            "created_at": "2026-01-11T15:26:24.991532+00:00",
+            "updated_at": "2026-01-11T15:26:24.991532+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "708f9b00-be46-4568-8ac2-b6f1345d0a25",
+            "jenis_pelatihan": "Merek",
+            "sub_kegiatan": "Peran Serta Masyarakat",
+            "waktu_pelaksanaan": "22 Maret 2025",
+            "tempat": "Madiun",
+            "link_materi": "https://drive.google.com/file/d/1fSbWE_8g3Da9zFM0EMYsAsbs5iWkin51/view?usp=drive_link",
+            "tahun_pelaksanaan": 2026,
+            "status": "Aktif",
+            "created_at": "2026-01-11T13:26:50.768364+00:00",
+            "updated_at": "2026-01-11T13:27:54.741+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "959f46ca-4c2f-4a7d-b8af-8f5fdb532084",
+            "jenis_pelatihan": "Pengembangan Produk",
+            "sub_kegiatan": "Inovasi dan Desain Produk",
+            "waktu_pelaksanaan": "10-12 Maret 2024, 08:00-16:00 WIB",
+            "tempat": "Aula Dinas Perindustrian Kota Madiun",
+            "link_materi": "https://drive.google.com/file/d/pengembangan-produk/view",
+            "tahun_pelaksanaan": 2024,
+            "status": "Selesai",
+            "created_at": "2026-01-11T12:11:36.370197+00:00",
+            "updated_at": "2026-01-11T12:11:36.370197+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "4d09441c-ddaf-424a-8d17-1787df87532b",
+            "jenis_pelatihan": "Manajemen Keuangan UMKM",
+            "sub_kegiatan": "Pembukuan dan Laporan Keuangan",
+            "waktu_pelaksanaan": "20-22 Februari 2024, 08:00-16:00 WIB",
+            "tempat": "Aula Dinas Perindustrian Kota Madiun",
+            "link_materi": "https://drive.google.com/file/d/manajemen-keuangan/view",
+            "tahun_pelaksanaan": 2024,
+            "status": "Aktif",
+            "created_at": "2026-01-11T12:11:36.269867+00:00",
+            "updated_at": "2026-01-11T12:11:36.269867+00:00",
+            "deleted_at": null
+          },
+          {
+            "id": "0c45985a-b7ff-4c02-94ff-534588b69eaf",
+            "jenis_pelatihan": "Digital Marketing untuk UMKM",
+            "sub_kegiatan": "Pemasaran Online dan Media Sosial",
+            "waktu_pelaksanaan": "15-17 Januari 2024, 08:00-16:00 WIB",
+            "tempat": "Aula Dinas Perindustrian Kota Madiun",
+            "link_materi": "https://drive.google.com/file/d/digital-marketing/view",
+            "tahun_pelaksanaan": 2024,
+            "status": "Aktif",
+            "created_at": "2026-01-11T12:11:36.113176+00:00",
+            "updated_at": "2026-01-11T12:11:36.113176+00:00",
+            "deleted_at": null
+          }
+        ]
+      }
+    },
+    {
+      "test": "Pelatihan API - GET",
+      "success": true,
+      "status": 200,
+      "duration": 583,
+      "response": {
+        "success": true,
+        "data": []
+      }
+    },
+    {
+      "test": "Dashboard Stats API",
+      "success": true,
+      "status": 200,
+      "duration": 1112,
+      "response": {
+        "totalIkmBinaan": {
+          "current": 7,
+          "previous": 6,
+          "change": "+17%"
+        },
+        "layananIkmJuara": {
+          "current": 17,
+          "previous": 16,
+          "change": "+6%",
+          "breakdown": {
+            "hkiMerek": 5,
+            "sertifikatHalal": 3,
+            "tkdnIk": 2,
+            "siinas": 2,
+            "ujiNilaiGizi": 2,
+            "kurasiProduk": 3
+          }
+        },
+        "pelatihanPemberdayaan": {
+          "current": 0,
+          "previous": 0,
+          "change": "0%"
+        },
+        "layananStats": [
+          {
+            "name": "Pendaftaran HKI Merek",
+            "total": 5,
+            "icon": "🏷️"
+          },
+          {
+            "name": "Pendaftaran Sertifikat Halal",
+            "total": 3,
+            "icon": "📜"
+          },
+          {
+            "name": "Pendaftaran TKDN IK",
+            "total": 2,
+            "icon": "🏭"
+          },
+          {
+            "name": "Pendaftaran dan Pendampingan SIINas",
+            "total": 2,
+            "icon": "🌐"
+          },
+          {
+            "name": "Pendaftaran Uji Nilai Gizi",
+            "total": 2,
+            "icon": "🧪"
+          },
+          {
+            "name": "Kurasi Produk",
+            "total": 3,
+            "icon": "✨"
+          }
+        ],
+        "recentActivities": [
+          {
+            "id": 1,
+            "type": "HKI Merek",
+            "message": "5 pendaftaran HKI Merek telah diproses",
+            "time": "1 jam yang lalu",
+            "status": "success"
+          },
+          {
+            "id": 2,
+            "type": "Sertifikat Halal",
+            "message": "3 sertifikat halal telah terbit",
+            "time": "2 jam yang lalu",
+            "status": "success"
+          },
+          {
+            "id": 4,
+            "type": "IKM Binaan",
+            "message": "7 IKM Binaan terdaftar dalam sistem",
+            "time": "4 jam yang lalu",
+            "status": "info"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Pelatihan Page Load",
+      "success": true,
+      "status": 200,
+      "duration": 65,
+      "response": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><meta name=\"next-head-count\" content=\"2\"/><link rel=\"preload\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" data-n-g=\"\"/><noscript data-n-css=\"\"></noscript><script defer=\"\" nomodule=\"\" src=\"/_next/static/chunks/polyfills-42372ed130431b0a.js\"></script><script src=\"/_next/static/chunks/webpack-21033dfea6f6dffb.js\" defer=\"\"></script><script src=\"/_next/static/chunks/framework-64ad27b21261a9ce.js\" defer=\"\"></script><script src=\"/_next/static/chunks/main-bf89f7ba731e71ca.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app-87cee5540118d1b4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/258-434f1377ecf49f64.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/pelatihan-17f0fea0d350ed4b.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_buildManifest.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_ssgManifest.js\" defer=\"\"></script></head><body><div id=\"__next\"><div class=\"min-h-screen flex items-center justify-center\"><div class=\"animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600\"></div></div></div><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{}},\"page\":\"/pelatihan\",\"query\":{},\"buildId\":\"build-20260111131819462\",\"nextExport\":true,\"autoExport\":true,\"isFallback\":false,\"scriptLoader\":[]}</script></body></html>"
+    },
+    {
+      "test": "Laporan Page Load",
+      "success": true,
+      "status": 200,
+      "duration": 63,
+      "response": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><meta name=\"next-head-count\" content=\"2\"/><link rel=\"preload\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" data-n-g=\"\"/><noscript data-n-css=\"\"></noscript><script defer=\"\" nomodule=\"\" src=\"/_next/static/chunks/polyfills-42372ed130431b0a.js\"></script><script src=\"/_next/static/chunks/webpack-21033dfea6f6dffb.js\" defer=\"\"></script><script src=\"/_next/static/chunks/framework-64ad27b21261a9ce.js\" defer=\"\"></script><script src=\"/_next/static/chunks/main-bf89f7ba731e71ca.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app-87cee5540118d1b4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/258-434f1377ecf49f64.js\" defer=\"\"></script><script src=\"/_next/static/chunks/93-1b86562eae5813b4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/laporan-206cd29d3c46d39c.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_buildManifest.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_ssgManifest.js\" defer=\"\"></script></head><body><div id=\"__next\"><div class=\"min-h-screen flex items-center justify-center\"><div class=\"animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600\"></div></div></div><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{}},\"page\":\"/laporan\",\"query\":{},\"buildId\":\"build-20260111131819462\",\"nextExport\":true,\"autoExport\":true,\"isFallback\":false,\"scriptLoader\":[]}</script></body></html>"
+    },
+    {
+      "test": "IKM Binaan Page Load",
+      "success": true,
+      "status": 200,
+      "duration": 69,
+      "response": "<!DOCTYPE html><html><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><meta name=\"next-head-count\" content=\"2\"/><link rel=\"preload\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" as=\"style\"/><link rel=\"stylesheet\" href=\"/_next/static/css/3df4c5eabaf7e82e.css\" data-n-g=\"\"/><noscript data-n-css=\"\"></noscript><script defer=\"\" nomodule=\"\" src=\"/_next/static/chunks/polyfills-42372ed130431b0a.js\"></script><script src=\"/_next/static/chunks/webpack-21033dfea6f6dffb.js\" defer=\"\"></script><script src=\"/_next/static/chunks/framework-64ad27b21261a9ce.js\" defer=\"\"></script><script src=\"/_next/static/chunks/main-bf89f7ba731e71ca.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/_app-87cee5540118d1b4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/258-434f1377ecf49f64.js\" defer=\"\"></script><script src=\"/_next/static/chunks/93-1b86562eae5813b4.js\" defer=\"\"></script><script src=\"/_next/static/chunks/pages/ikm-binaan-afca2a27ccbc9e9a.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_buildManifest.js\" defer=\"\"></script><script src=\"/_next/static/build-20260111131819462/_ssgManifest.js\" defer=\"\"></script></head><body><div id=\"__next\"><div class=\"min-h-screen flex items-center justify-center\"><div class=\"animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600\"></div></div></div><script id=\"__NEXT_DATA__\" type=\"application/json\">{\"props\":{\"pageProps\":{}},\"page\":\"/ikm-binaan\",\"query\":{},\"buildId\":\"build-20260111131819462\",\"nextExport\":true,\"autoExport\":true,\"isFallback\":false,\"scriptLoader\":[]}</script></body></html>"
+    },
+    {
+      "test": "Database Connectivity",
+      "success": true
+    },
+    {
+      "test": "Form Submission",
+      "success": true
+    }
+  ]
+}

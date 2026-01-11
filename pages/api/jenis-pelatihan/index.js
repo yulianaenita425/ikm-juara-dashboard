@@ -30,21 +30,42 @@ export default async function handler(req, res) {
   }
 }
 
-// GET - Ambil semua data Jenis Pelatihan
+// GET - Ambil semua data Jenis Pelatihan dengan jumlah peserta
 async function handleGet(req, res) {
-  const { data, error } = await supabaseAdmin
+  // Ambil data jenis pelatihan
+  const { data: jenisData, error: jenisError } = await supabaseAdmin
     .from('jenis_pelatihan')
     .select('*')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
-  if (error) {
-    throw error
+  if (jenisError) {
+    throw jenisError
   }
+
+  // Ambil jumlah peserta untuk setiap jenis pelatihan
+  const jenisWithPeserta = await Promise.all(
+    (jenisData || []).map(async (jenis) => {
+      const { count, error: countError } = await supabaseAdmin
+        .from('pelatihan')
+        .select('id', { count: 'exact' })
+        .eq('jenis_pelatihan_id', jenis.id)
+        .is('deleted_at', null)
+
+      if (countError) {
+        console.error('Error counting peserta:', countError)
+      }
+
+      return {
+        ...jenis,
+        jumlah_peserta: count || 0
+      }
+    })
+  )
 
   return res.status(200).json({
     success: true,
-    data: data || []
+    data: jenisWithPeserta
   })
 }
 

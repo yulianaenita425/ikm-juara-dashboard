@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-01-11T16:55:15.272Z",
+  "results": {
+    "database": true,
+    "apiJenis": false,
+    "apiPelatihan": false,
+    "sinkronisasi": false,
+    "frontend": true
+  },
+  "allPassed": false,
+  "summary": "SOME TESTS FAILED"
+}

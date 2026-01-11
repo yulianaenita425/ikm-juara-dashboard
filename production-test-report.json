@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-01-11T16:58:47.368Z",
+  "productionUrl": "https://ikm-juara-dashboard.vercel.app",
+  "totalTests": 4,
+  "successfulTests": 4,
+  "allPassed": true,
+  "testResults": [
+    {
+      "test": "Homepage",
+      "success": true,
+      "status": 200
+    },
+    {
+      "test": "API Jenis Pelatihan",
+      "success": true,
+      "status": 200
+    },
+    {
+      "test": "API Pelatihan",
+      "success": true,
+      "status": 200
+    },
+    {
+      "test": "Pelatihan Page",
+      "success": true,
+      "status": 200
+    }
+  ],
+  "summary": "ALL PRODUCTION TESTS PASSED"
+}

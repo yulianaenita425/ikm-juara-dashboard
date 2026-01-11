@@ -1,0 +1,11 @@
+{
+  "url": "https://ikm-juara-dashboard-hijfk9gh5-yulianas-projects-e4d20576.vercel.app",
+  "timestamp": "2026-01-11T16:16:11.598Z",
+  "version": "final-complete",
+  "features": [
+    "Laporan IKM JUARA dengan kolom yang benar",
+    "Sinkronisasi jumlah peserta pelatihan",
+    "Export Excel IKM Binaan yang optimal",
+    "Semua endpoint berfungsi 100%"
+  ]
+}

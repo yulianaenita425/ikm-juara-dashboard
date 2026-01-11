@@ -4,7 +4,6 @@ import Layout from '../components/Layout'
 import AdminRoute from '../components/AdminRoute'
 import { PlusIcon, MagnifyingGlassIcon, PencilIcon, TrashIcon, ExclamationTriangleIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline'
 import { exportIKMBinaanPDF } from '../lib/pdfExport'
-import { exportIKMBinaanToExcel, exportToCSV } from '../lib/excelExport'
 
 export default function IKMBinaanPage() {
   const router = useRouter()
@@ -180,57 +179,39 @@ export default function IKMBinaanPage() {
     }
 
     try {
-      // Coba export ke format Excel yang sesungguhnya
-      const excelSuccess = exportIKMBinaanToExcel(filteredIKM)
+      // Prepare CSV data
+      const headers = ['No.', 'NIB', 'No. KTP', 'Nama Lengkap', 'Alamat Lengkap', 'Nama Usaha', 'No.HP', 'Tanggal Input']
+      let csvContent = headers.join(',') + '\n'
       
-      if (excelSuccess) {
-        const timestamp = new Date().toISOString().split('T')[0]
-        alert(`✅ Data IKM Binaan berhasil diekspor ke Excel!\nFile: Data_IKM_Binaan_${timestamp}.xls\nJumlah data: ${filteredIKM.length} records`)
-        console.log('Excel IKM Binaan berhasil diekspor')
-      } else {
-        // Fallback ke CSV jika Excel gagal
-        console.log('Excel export failed, falling back to CSV')
-        await handleExportCSV()
-      }
+      filteredIKM.forEach((ikm, index) => {
+        const row = [
+          index + 1,
+          ikm.nib || '',
+          ikm.nik || '',
+          `"${(ikm.nama_lengkap || '').replace(/"/g, '""')}"`,
+          `"${(ikm.alamat_lengkap || '').replace(/"/g, '""')}"`,
+          `"${(ikm.nama_usaha || '').replace(/"/g, '""')}"`,
+          ikm.nomor_hp || '',
+          new Date(ikm.created_at).toLocaleDateString('id-ID')
+        ]
+        csvContent += row.join(',') + '\n'
+      })
       
+      // Download CSV file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `ikm_binaan_${new Date().toISOString().split('T')[0]}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      console.log('Excel IKM Binaan berhasil diekspor')
     } catch (error) {
       console.error('Error exporting Excel:', error)
-      // Fallback ke CSV
-      console.log('Falling back to CSV export')
-      await handleExportCSV()
-    }
-  }
-
-  const handleExportCSV = async () => {
-    try {
-      // Transform data untuk CSV
-      const csvData = filteredIKM.map((ikm, index) => ({
-        'No.': index + 1,
-        'NIB': ikm.nib || '',
-        'No. KTP': ikm.nik || '',
-        'Nama Lengkap': ikm.nama_lengkap || '',
-        'Alamat Lengkap': ikm.alamat_lengkap || '',
-        'Nama Usaha': ikm.nama_usaha || '',
-        'No. HP': ikm.nomor_hp || '',
-        'Tanggal Input': ikm.created_at ? new Date(ikm.created_at).toLocaleDateString('id-ID') : '',
-        'Status Database': ikm.database_indicator ? 'Lengkap' : 'Belum Lengkap'
-      }))
-      
-      const timestamp = new Date().toISOString().split('T')[0]
-      const filename = `Data_IKM_Binaan_${timestamp}.csv`
-      
-      const csvSuccess = exportToCSV(csvData, filename)
-      
-      if (csvSuccess) {
-        alert(`✅ Data IKM Binaan berhasil diekspor ke CSV!\nFile: ${filename}\nJumlah data: ${filteredIKM.length} records\n\nCatatan: File CSV dapat dibuka di Excel`)
-        console.log('CSV IKM Binaan berhasil diekspor:', filename)
-      } else {
-        throw new Error('CSV export failed')
-      }
-      
-    } catch (error) {
-      console.error('Error exporting CSV:', error)
-      alert('❌ Gagal mengekspor data. Silakan coba lagi.\nError: ' + error.message)
+      alert('Gagal mengekspor Excel. Silakan coba lagi.')
     }
   }
 
@@ -281,7 +262,7 @@ export default function IKMBinaanPage() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleExportPDF}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-700 transition-colors"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-700"
               >
                 <DocumentArrowDownIcon className="h-5 w-5" />
                 <span>Export PDF</span>
@@ -289,7 +270,7 @@ export default function IKMBinaanPage() {
               
               <button
                 onClick={handleExportExcel}
-                className="bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-orange-700 transition-colors"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700"
               >
                 <DocumentArrowDownIcon className="h-5 w-5" />
                 <span>Export Excel</span>

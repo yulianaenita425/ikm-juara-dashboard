@@ -149,23 +149,173 @@ const dummySearchData = {
 }
 
 // Fungsi pencarian yang lebih fleksibel
-const searchInData = (searchTerm) => {
+const searchInData = async (searchTerm) => {
   const term = searchTerm.toLowerCase().trim()
   
-  // Cari berdasarkan NIB, NIK, atau nama
-  for (const key in dummySearchData) {
-    const data = dummySearchData[key]
-    if (
-      data.nib === term ||
-      data.nik === term ||
-      (data.nama_lengkap || '').toLowerCase().includes(term) ||
-      (data.nama_usaha || '').toLowerCase().includes(term)
-    ) {
-      return data
+  try {
+    // Search in real database via API
+    const response = await fetch('/api/ikm-binaan')
+    const result = await response.json()
+    
+    if (result.success && result.data) {
+      // Find matching IKM data
+      const matchedIkm = result.data.find(ikm => 
+        ikm.nib === term ||
+        ikm.nik === term ||
+        (ikm.nama_lengkap || '').toLowerCase().includes(term) ||
+        (ikm.nama_usaha || '').toLowerCase().includes(term)
+      )
+      
+      if (matchedIkm) {
+        // Get additional data for this IKM
+        const [pelatihanRes, hkiRes, sertifikatRes, tkdnRes, siinasRes, ujiRes, kurasiRes] = await Promise.all([
+          fetch('/api/pelatihan'),
+          fetch('/api/hki-merek'),
+          fetch('/api/sertifikat-halal'),
+          fetch('/api/tkdn-ik'),
+          fetch('/api/siinas'),
+          fetch('/api/uji-nilai-gizi'),
+          fetch('/api/kurasi-produk')
+        ])
+        
+        const [pelatihan, hki, sertifikat, tkdn, siinas, uji, kurasi] = await Promise.all([
+          pelatihanRes.json(),
+          hkiRes.json(),
+          sertifikatRes.json(),
+          tkdnRes.json(),
+          siinasRes.json(),
+          ujiRes.json(),
+          kurasiRes.json()
+        ])
+        
+        // Build complete data object
+        const completeData = {
+          ...matchedIkm,
+          database_indicator: true,
+          layanan: {},
+          pelatihan: []
+        }
+        
+        // Add layanan data
+        if (hki.success && hki.data) {
+          const hkiData = hki.data.find(h => h.ikm_id === matchedIkm.id)
+          if (hkiData) {
+            completeData.layanan.hki_merek = {
+              nomor_pendaftaran: hkiData.nomor_pendaftaran,
+              status_sertifikat: hkiData.status_sertifikat,
+              tahun_fasilitasi: hkiData.tahun_fasilitasi,
+              link_sertifikat: hkiData.link_sertifikat
+            }
+          }
+        }
+        
+        if (sertifikat.success && sertifikat.data) {
+          const sertifikatData = sertifikat.data.find(s => s.ikm_id === matchedIkm.id)
+          if (sertifikatData) {
+            completeData.layanan.sertifikat_halal = {
+              nomor_sertifikat: sertifikatData.nomor_sertifikat,
+              tahun_fasilitasi: sertifikatData.tahun_fasilitasi,
+              link_sertifikat: sertifikatData.link_sertifikat
+            }
+          }
+        }
+        
+        if (tkdn.success && tkdn.data) {
+          const tkdnData = tkdn.data.find(t => t.ikm_id === matchedIkm.id)
+          if (tkdnData) {
+            completeData.layanan.tkdn_ik = {
+              nomor_sertifikat: tkdnData.nomor_sertifikat,
+              persentase_tkdn: tkdnData.persentase_tkdn,
+              tahun_terbit: tkdnData.tahun_terbit,
+              link_sertifikat: tkdnData.link_sertifikat
+            }
+          }
+        }
+        
+        if (siinas.success && siinas.data) {
+          const siinasData = siinas.data.find(s => s.ikm_id === matchedIkm.id)
+          if (siinasData) {
+            completeData.layanan.siinas = {
+              nomor_sertifikat: siinasData.nomor_sertifikat,
+              tahun_fasilitasi: siinasData.tahun_fasilitasi,
+              link_sertifikat: siinasData.link_sertifikat
+            }
+          }
+        }
+        
+        if (uji.success && uji.data) {
+          const ujiData = uji.data.find(u => u.ikm_id === matchedIkm.id)
+          if (ujiData) {
+            completeData.layanan.uji_nilai_gizi = {
+              nomor_lhu: ujiData.nomor_lhu,
+              tanggal_hasil_uji: ujiData.tanggal_hasil_uji,
+              tahun_fasilitasi: ujiData.tahun_fasilitasi,
+              link_lhu: ujiData.link_lhu
+            }
+          }
+        }
+        
+        if (kurasi.success && kurasi.data) {
+          const kurasiData = kurasi.data.find(k => k.ikm_id === matchedIkm.id)
+          if (kurasiData) {
+            completeData.layanan.kurasi_produk = {
+              nomor_sertifikat: kurasiData.nomor_sertifikat,
+              link_sertifikat: kurasiData.link_sertifikat
+            }
+          }
+        }
+        
+        // Add pelatihan data
+        if (pelatihan.success && pelatihan.data) {
+          completeData.pelatihan = pelatihan.data
+            .filter(p => p.ikm_id === matchedIkm.id)
+            .map(p => ({
+              id: p.id,
+              nama_pelatihan: p.nama_pelatihan,
+              sub_kegiatan: p.jenis_pelatihan?.sub_kegiatan || '',
+              tanggal_pelatihan: p.tanggal_pelatihan,
+              tahun_pelaksanaan: p.jenis_pelatihan?.tahun_pelaksanaan || new Date().getFullYear(),
+              status: 'Selesai',
+              sertifikat: p.sertifikat
+            }))
+        }
+        
+        return completeData
+      }
     }
+    
+    // Fallback to dummy data if not found in database
+    for (const key in dummySearchData) {
+      const data = dummySearchData[key]
+      if (
+        data.nib === term ||
+        data.nik === term ||
+        (data.nama_lengkap || '').toLowerCase().includes(term) ||
+        (data.nama_usaha || '').toLowerCase().includes(term)
+      ) {
+        return data
+      }
+    }
+    
+    return null
+  } catch (error) {
+    console.error('Error searching data:', error)
+    
+    // Fallback to dummy data on error
+    for (const key in dummySearchData) {
+      const data = dummySearchData[key]
+      if (
+        data.nib === term ||
+        data.nik === term ||
+        (data.nama_lengkap || '').toLowerCase().includes(term) ||
+        (data.nama_usaha || '').toLowerCase().includes(term)
+      ) {
+        return data
+      }
+    }
+    
+    return null
   }
-  
-  return null
 }
 
 export default function PenelusuranPage() {
@@ -198,13 +348,11 @@ export default function PenelusuranPage() {
     setSearched(true)
     
     try {
-      // Simulasi delay pencarian
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const result = searchInData(searchTerm)
+      const result = await searchInData(searchTerm)
       setSearchResult(result)
     } catch (error) {
       console.error('Error searching:', error)
+      alert('Terjadi kesalahan saat mencari data')
     } finally {
       setLoading(false)
     }

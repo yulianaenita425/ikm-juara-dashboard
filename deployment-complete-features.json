@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-01-11T17:11:58.901Z",
+  "buildId": "build-20260111171158901",
+  "url": "https://ikm-juara-dashboard-3qsk7rztr-yulianas-projects-e4d20576.vercel.app",
+  "features": [
+    "Export Excel di /ikm-binaan",
+    "Laporan komprehensif di /laporan",
+    "Pelatihan dengan peserta di /pelatihan"
+  ],
+  "status": "SUCCESS"
+}

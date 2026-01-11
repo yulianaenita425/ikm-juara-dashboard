@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-01-11T17:14:20.748Z",
+  "buildId": "main-20260111171420748",
+  "deploymentUrl": "https://ikm-juara-dashboard-6l51hvruj-yulianas-projects-e4d20576.vercel.app",
+  "mainDomain": "https://ikm-juara-dashboard.vercel.app",
+  "features": [
+    "Export Excel di /ikm-binaan dengan tombol orange",
+    "Laporan komprehensif di /laporan dengan filter lengkap",
+    "Pelatihan dengan detail peserta di /pelatihan (klik jumlah peserta)",
+    "Dashboard realtime di /dashboard"
+  ],
+  "status": "SUCCESS"
+}

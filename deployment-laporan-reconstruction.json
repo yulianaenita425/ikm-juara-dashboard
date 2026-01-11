@@ -1,0 +1,20 @@
+{
+  "url": "https://ikm-juara-dashboard-m650w59yc-yulianas-projects-e4d20576.vercel.app",
+  "timestamp": "2026-01-11T16:35:01.352Z",
+  "feature": "Rekonstruksi Halaman Laporan IKM JUARA",
+  "changes": [
+    "Kolom sesuai spesifikasi exact untuk setiap jenis layanan",
+    "HKI Merek: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. Pendaftaran, Status, Tahun, Dokumen",
+    "Sertifikat Halal: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. Sertifikat, Status, Tahun Fasilitasi, Link Sertifikat, Link Logo",
+    "TKDN IK: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. Sertifikat, TKDN %, Status, Tahun Fasilitasi, Link Dokumen",
+    "SIINas: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. Bukti Akun, Tahun Registrasi, Link Dokumen",
+    "Uji Nilai Gizi: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. LHU, Tahun Fasilitasi, Link Dokumen",
+    "Kurasi Produk: NIB, NIK, Nama Lengkap, Nama Usaha, No. HP, No. Sertifikat, Link Dokumen",
+    "UI modern dengan statistics cards untuk setiap layanan",
+    "Filter advanced (jenis layanan, tahun, bulan, status)",
+    "Export Excel functionality",
+    "Reset filter functionality",
+    "Status badges dengan color coding",
+    "Responsive design untuk mobile dan desktop"
+  ]
+}

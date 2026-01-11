@@ -1,0 +1,14 @@
+{
+  "url": "https://ikm-juara-dashboard-1pf4akfw7-yulianas-projects-e4d20576.vercel.app",
+  "timestamp": "2026-01-11T16:24:51.707Z",
+  "feature": "Export Excel untuk IKM Binaan",
+  "changes": [
+    "Tombol Export Excel dengan warna orange untuk visibility",
+    "Export ke format Excel (.xls) yang sesungguhnya",
+    "Fallback ke CSV jika Excel gagal",
+    "UTF-8 encoding dengan BOM untuk karakter Indonesia",
+    "Kolom lengkap dengan status database dan duplikasi",
+    "User-friendly success messages",
+    "Error handling yang robust"
+  ]
+}

@@ -1,232 +1,130 @@
-# Database IKM JUARA - DisnakerKUKM Kota Madiun
+# 🏢 IKM JUARA Dashboard
 
-Website sistem informasi Database IKM JUARA untuk Dinas Tenaga Kerja dan KUKM Kota Madiun dengan fitur **Dashboard Real-Time** menggunakan Next.js Pages Router dan Tailwind CSS.
+Dashboard sistem database IKM JUARA untuk DisnakerKUKM Kota Madiun.
 
-## 🚀 Fitur Utama
+## 🌐 Live Demo
+**Production:** https://ikm-juara-dashboard.vercel.app
 
-### 📊 Dashboard Real-Time (NEW!)
-- **Auto-refresh**: Data diperbarui otomatis setiap 15 detik
-- **Live indicator**: Status koneksi dan waktu update terakhir  
-- **Animated counters**: Perubahan angka dengan animasi smooth
-- **Real-time statistics**: Statistik layanan dan aktivitas terbaru
-- **Manual refresh**: Tombol refresh untuk update instant
+## ✨ Fitur Utama
 
-### Sistem Login
-- **Mode Admin**: `admin` / `admin123` - Akses penuh ke semua fitur manajemen
-- **Mode Pengguna**: `user` / `user123` - Akses terbatas dengan popup buku tamu
+### 📊 Export Excel
+- Export data IKM Binaan ke format Excel
+- Tombol export berwarna orange
+- Support Excel (.xls) dan CSV fallback
 
-### Dashboard Admin
-- 📊 **Dashboard IKM Binaan**: Statistik real-time dan overview
-- 🏭 **IKM Binaan**: Manajemen data IKM dengan NIB, NIK, dan detail lengkap
-- 🛠️ **Layanan IKM Juara**:
-  - Pendaftaran HKI Merek
-  - Pendaftaran Sertifikat Halal  
-  - Pendaftaran TKDN IK
-  - Pendaftaran dan Pendampingan SIINas
-  - Pendaftaran Uji Nilai Gizi
-  - Kurasi Produk
-- 🎓 **Pelatihan Pemberdayaan Industri**
-- 🔍 **Penelusuran Data IKM Binaan**: Pencarian komprehensif
-- 🗑️ **Recycle Bin**: Manajemen data terhapus
+### 📈 Laporan Komprehensif
+- Filter berdasarkan jenis layanan, tahun, bulan, status
+- Export data per jenis layanan
+- Statistik realtime
 
-### Fitur Khusus
-- **Real-Time Dashboard**: Update otomatis setiap 15 detik dengan indikator live
-- **Auto-fill Data**: Input NIB/NIK/Nama otomatis mengisi data dari database IKM Binaan
-- **Database Indicator**: Status otomatis berdasarkan kelengkapan layanan
-- **Link Management**: Integrasi dengan Google Drive untuk dokumen
-- **Soft Delete**: Data terhapus dapat dikembalikan
-- **Responsive Design**: Optimal di desktop dan mobile
+### 🎓 Manajemen Pelatihan
+- Detail peserta per jenis pelatihan
+- Pencarian IKM Binaan terintegrasi
+- Export Excel/PDF untuk peserta
+- Tombol edit untuk setiap peserta
 
-## 🛠️ Tech Stack
+### 📱 Dashboard Realtime
+- Statistik live dari database
+- Counter animasi
+- Indikator koneksi realtime
 
-- **Frontend**: Next.js 14 dengan Pages Router
-- **Database**: Supabase (PostgreSQL)
-- **Real-Time**: Custom hooks dengan auto-refresh
-- **Styling**: Tailwind CSS
-- **Icons**: Heroicons
-- **Deployment**: Vercel Ready
+## 🛠️ Teknologi
 
-## 📋 Setup Development
+- **Frontend:** Next.js 14, React 18, Tailwind CSS
+- **Backend:** Supabase PostgreSQL
+- **Deployment:** Vercel
+- **Export:** jsPDF, Custom Excel export
 
-### 1. Clone dan Install
+## 🚀 Development
+
 ```bash
-git clone <repository-url>
-cd ikm-juara
+# Install dependencies
 npm install
-```
 
-### 2. Setup Environment Variables
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local`:
-```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-
-# Dashboard Real-Time Configuration
-NEXT_PUBLIC_DASHBOARD_REFRESH_INTERVAL=15000
-```
-
-### 3. Setup Database
-1. Buat project di [Supabase](https://supabase.com)
-2. Jalankan script `database-setup.sql` di SQL Editor
-3. Update environment variables
-
-### 4. Jalankan Development Server
-```bash
+# Run development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
-
-Buka [http://localhost:3000](http://localhost:3000) di browser.
-
-## 🔐 Demo Login
-
-### Admin Mode
-- **Username**: `admin`
-- **Password**: `admin123`
-- **Akses**: Dashboard real-time + semua fitur manajemen
-
-### User Mode  
-- **Username**: `user`
-- **Password**: `user123`
-- **Akses**: Popup buku tamu, akses terbatas
-
-## 📊 Dashboard Real-Time Features
-
-### Auto-Refresh Statistics
-- **Total IKM Binaan**: Jumlah IKM terdaftar (update real-time)
-- **Layanan Aktif**: Layanan dalam proses (auto-sync)
-- **Pelatihan Selesai**: Pelatihan completed (live count)
-- **Pengguna Terdaftar**: Total users (real-time)
-
-### Live Indicators
-- 🟢 **Live**: Koneksi aktif, data ter-sync
-- 🔴 **Terputus**: Koneksi bermasalah
-- ⏱️ **Timer**: Countdown refresh berikutnya
-- 🔄 **Manual Refresh**: Update instant
-
-### Animated Features
-- **Smooth Counters**: Angka berubah dengan animasi
-- **Color Coding**: Hijau (naik), Merah (turun)
-- **Loading States**: Skeleton loading yang smooth
-
-## 🚀 Deployment ke Vercel
-
-### 1. Push ke GitHub
-```bash
-git add .
-git commit -m "Add real-time dashboard"
-git push origin main
-```
-
-### 2. Deploy di Vercel
-1. Login ke [vercel.com](https://vercel.com)
-2. Import repository dari GitHub
-3. Tambahkan environment variables di Vercel dashboard
-4. Deploy otomatis akan berjalan
 
 ## 📁 Struktur Project
 
 ```
-├── pages/                       # Next.js Pages Router
-│   ├── api/
-│   │   └── dashboard/
-│   │       └── stats.js        # Real-time API endpoint
-│   ├── _app.js                 # App wrapper
-│   ├── index.js                # Home redirect
-│   ├── login.js                # Login system
-│   ├── dashboard.js            # Real-time dashboard
-│   ├── ikm-binaan.js          # IKM Binaan management
-│   ├── layanan/               # Layanan IKM Juara
-│   └── ...
-├── components/                 # Reusable components
-│   ├── Layout.js              # Main layout with sidebar
-│   ├── RealTimeIndicator.js   # Live status indicator
-│   ├── AnimatedCounter.js     # Animated number counter
-│   └── BukuTamuModal.js       # Guest book modal
-├── hooks/                     # Custom React hooks
-│   └── useDashboardData.js    # Real-time data hook
-├── lib/                       # Utilities
-│   └── supabase.js           # Database connection & helpers
-├── docs/                      # Documentation
-│   └── DASHBOARD_REALTIME.md  # Real-time dashboard docs
-└── database-setup.sql         # Database schema
+├── pages/              # Next.js pages
+│   ├── api/           # API routes
+│   ├── dashboard.js   # Dashboard utama
+│   ├── ikm-binaan.js  # Manajemen IKM Binaan
+│   ├── pelatihan.js   # Manajemen Pelatihan
+│   └── laporan.js     # Laporan komprehensif
+├── components/        # React components
+├── lib/              # Utilities
+│   ├── supabase.js   # Database connection
+│   ├── excelExport.js # Excel export utilities
+│   └── pdfExport.js  # PDF export utilities
+└── styles/           # CSS styles
 ```
 
-## 🔧 Cara Kerja Dashboard Real-Time
+## 🔧 Environment Variables
 
-### 1. Auto-Refresh Mechanism
-```javascript
-// Custom hook dengan auto-refresh
-const { data, loading, error, lastUpdated, refresh } = useRealTimeStats()
-
-// Refresh setiap 15 detik
-useEffect(() => {
-  const interval = setInterval(fetchData, 15000)
-  return () => clearInterval(interval)
-}, [])
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-### 2. API Integration
-```javascript
-// API endpoint: /api/dashboard/stats
-// Otomatis fallback ke simulasi jika database tidak tersedia
-GET /api/dashboard/stats
+## 📊 Database Schema
+
+- **ikm_binaan:** Data IKM Binaan utama
+- **jenis_pelatihan:** Master jenis pelatihan
+- **pelatihan:** Data peserta pelatihan
+- **hki_merek:** Data HKI Merek
+- **sertifikat_halal:** Data Sertifikat Halal
+- **tkdn_ik:** Data TKDN IK
+- **siinas:** Data SIINas
+- **kurasi_produk:** Data Kurasi Produk
+- **uji_nilai_gizi:** Data Uji Nilai Gizi
+
+## 🎯 Fitur Export
+
+### Excel Export
+- Format .xls yang dapat dibuka di Microsoft Excel
+- UTF-8 encoding untuk karakter Indonesia
+- Fallback ke CSV jika Excel gagal
+
+### PDF Export
+- Layout profesional dengan header/footer
+- Tabel responsif dengan styling
+- Summary statistik
+
+## 🔒 Security
+
+- Row Level Security (RLS) di Supabase
+- Authentication middleware
+- Environment variables untuk sensitive data
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Tablet dan desktop optimization
+- Touch-friendly interface
+
+## 🚀 Deployment
+
+Otomatis deploy ke Vercel saat push ke main branch.
+
+Manual deployment:
+```bash
+npm run build
+vercel --prod
 ```
-
-### 3. Visual Feedback
-- **Loading States**: Skeleton loading saat fetch data
-- **Error Handling**: Pesan error dengan retry button
-- **Success States**: Animasi smooth saat data berubah
-
-## 🎯 Fitur Demo & Testing
-
-### Real-Time Dashboard
-- ✅ Auto-refresh setiap 15 detik
-- ✅ Live connection indicator
-- ✅ Animated counters dengan smooth transition
-- ✅ Manual refresh button
-- ✅ Error handling dengan retry
-
-### Existing Features
-- ✅ Login system dengan dual mode
-- ✅ IKM Binaan CRUD operations
-- ✅ HKI Merek management
-- ✅ Penelusuran data (demo: NIB 1234567890123)
-- ✅ Recycle bin functionality
-- ✅ Responsive sidebar navigation
-
-## 🔧 Konfigurasi Dashboard
-
-### Mengubah Interval Refresh
-```javascript
-// Di pages/dashboard.js
-const { data } = useDashboardData(30000) // 30 detik
-```
-
-### Menambah Statistik Baru
-1. Update `pages/api/dashboard/stats.js`
-2. Tambah query di `lib/supabase.js`
-3. Update UI di `pages/dashboard.js`
-
-## 🤝 Kontribusi
-
-1. Fork repository
-2. Buat feature branch (`git checkout -b feature/RealtimeDashboard`)
-3. Commit perubahan (`git commit -m 'Add real-time dashboard'`)
-4. Push ke branch (`git push origin feature/RealtimeDashboard`)
-5. Buat Pull Request
 
 ## 📞 Support
 
-Untuk bantuan teknis atau pertanyaan:
-- Email: support@disnakermadiun.go.id
-- WhatsApp: +62 xxx-xxxx-xxxx
+Untuk pertanyaan atau dukungan teknis, hubungi tim development.
 
 ---
 
-**Database IKM JUARA** - Memajukan UMKM Kota Madiun melalui digitalisasi data dan layanan terpadu dengan teknologi real-time.
+© 2024 DisnakerKUKM Kota Madiun - IKM JUARA Dashboard
