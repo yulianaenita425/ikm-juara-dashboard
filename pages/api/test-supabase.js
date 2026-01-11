@@ -1,5 +1,5 @@
 // API endpoint untuk test koneksi Supabase
-import { supabase, supabaseAdmin } from '../../lib/supabase'
+import { supabase, supabaseAdmin, checkSupabaseConfig, getSupabaseError } from '../../lib/supabase'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -7,11 +7,20 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Test koneksi dengan supabaseAdmin
-    if (!supabaseAdmin) {
-      return res.status(500).json({ 
-        error: 'Supabase not configured',
-        message: 'Please check your environment variables'
+    // Check konfigurasi
+    const config = checkSupabaseConfig()
+    const error = getSupabaseError()
+    
+    if (error) {
+      return res.status(500).json({
+        success: false,
+        error: error,
+        config: {
+          hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+          nodeEnv: process.env.NODE_ENV
+        }
       })
     }
 
@@ -37,6 +46,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: 'Supabase connection successful!',
+      config,
       data: {
         sampleIkm: ikmData,
         totalIkm: totalIkm,
@@ -49,7 +59,7 @@ export default async function handler(req, res) {
     return res.status(500).json({
       success: false,
       error: error.message,
-      details: error
+      details: process.env.NODE_ENV === 'development' ? error : undefined
     })
   }
 }
