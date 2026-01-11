@@ -44,6 +44,15 @@ async function handleGet(req, res) {
         alamat_lengkap,
         nama_usaha,
         nomor_hp
+      ),
+      jenis_pelatihan:jenis_pelatihan_id (
+        id,
+        jenis_pelatihan,
+        sub_kegiatan,
+        waktu_pelaksanaan,
+        tempat,
+        tahun_pelaksanaan,
+        status
       )
     `)
     .is('deleted_at', null)
@@ -63,6 +72,7 @@ async function handleGet(req, res) {
 async function handlePost(req, res) {
   const { 
     ikm_id, 
+    jenis_pelatihan_id,
     nama_pelatihan, 
     tanggal_pelatihan, 
     sertifikat 
@@ -94,6 +104,7 @@ async function handlePost(req, res) {
     .from('pelatihan')
     .insert([{
       ikm_id,
+      jenis_pelatihan_id: jenis_pelatihan_id || null,
       nama_pelatihan,
       tanggal_pelatihan,
       sertifikat: sertifikat || null
@@ -108,6 +119,15 @@ async function handlePost(req, res) {
         alamat_lengkap,
         nama_usaha,
         nomor_hp
+      ),
+      jenis_pelatihan:jenis_pelatihan_id (
+        id,
+        jenis_pelatihan,
+        sub_kegiatan,
+        waktu_pelaksanaan,
+        tempat,
+        tahun_pelaksanaan,
+        status
       )
     `)
     .single()

@@ -251,21 +251,6 @@ export default function KurasiProdukPage() {
       }
     }
   }
-      nama_usaha: kurasi.nama_usaha,
-      nomor_hp: kurasi.nomor_hp,
-      nomor_sertifikat: kurasi.nomor_sertifikat,
-      link_sertifikat: kurasi.link_sertifikat
-    })
-    setEditingId(kurasi.id)
-    setShowForm(true)
-  }
-
-  const handleDelete = async (id) => {
-    if (confirm('Yakin ingin menghapus data ini?')) {
-      setKurasiList(prev => prev.filter(item => item.id !== id))
-      alert('Data berhasil dihapus!')
-    }
-  }
 
   const resetForm = () => {
     setFormData({

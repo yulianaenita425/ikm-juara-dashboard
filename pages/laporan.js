@@ -401,7 +401,7 @@ export default function LaporanPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Semua Tahun</option>
-                  {[2024, 2023, 2022, 2021, 2020].map(year => (
+                  {Array.from({length: 21}, (_, i) => 2040 - i).map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>

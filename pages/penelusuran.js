@@ -97,6 +97,54 @@ const dummySearchData = {
       }
     },
     pelatihan: []
+  },
+  '1909210016219': {
+    id: '4',
+    nib: '1909210016219',
+    nik: '3573012345678905',
+    nama_lengkap: 'Rina Sari',
+    alamat_lengkap: 'Jl. Ahmad Yani No. 45, Kelurahan Demangan, Kota Madiun',
+    nama_usaha: 'CV. Makmur Sejahtera',
+    nomor_hp: '081234567894',
+    database_indicator: true,
+    layanan: {
+      hki_merek: {
+        nomor_pendaftaran: 'HKI-2024-005',
+        status_sertifikat: 'Telah Didaftar',
+        tahun_fasilitasi: 2024,
+        link_sertifikat: 'https://drive.google.com/file/d/hki005/view'
+      },
+      sertifikat_halal: {
+        nomor_sertifikat: 'HALAL-2024-005',
+        tahun_fasilitasi: 2024,
+        link_sertifikat: 'https://drive.google.com/file/d/halal005/view'
+      },
+      siinas: {
+        nomor_bukti_akun: 'SIINAS-2024-005',
+        tahun_registrasi: 2024,
+        link_bukti: 'https://drive.google.com/file/d/siinas005/view'
+      }
+    },
+    pelatihan: [
+      {
+        id: '4',
+        nama_pelatihan: 'Digital Marketing untuk UMKM',
+        sub_kegiatan: 'Pemasaran Online dan Media Sosial',
+        tanggal_pelatihan: '2024-01-15',
+        tahun_pelaksanaan: 2024,
+        status: 'Selesai',
+        sertifikat: 'https://drive.google.com/file/d/pelatihan004/view'
+      },
+      {
+        id: '5',
+        nama_pelatihan: 'Manajemen Keuangan UMKM',
+        sub_kegiatan: 'Pembukuan dan Laporan Keuangan',
+        tanggal_pelatihan: '2024-02-20',
+        tahun_pelaksanaan: 2024,
+        status: 'Selesai',
+        sertifikat: 'https://drive.google.com/file/d/pelatihan005/view'
+      }
+    ]
   }
 }
 

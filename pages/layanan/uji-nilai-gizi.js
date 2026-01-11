@@ -262,30 +262,6 @@ export default function UjiNilaiGiziPage() {
     }
   }
 
-  const handleEdit = (gizi) => {
-    setFormData({
-      nib: gizi.nib,
-      nik: gizi.nik,
-      nama_lengkap: gizi.nama_lengkap,
-      alamat_lengkap: gizi.alamat_lengkap,
-      nama_usaha: gizi.nama_usaha,
-      nomor_hp: gizi.nomor_hp,
-      nomor_lhu: gizi.nomor_lhu,
-      tanggal_hasil_uji: gizi.tanggal_hasil_uji,
-      tahun_fasilitasi: gizi.tahun_fasilitasi,
-      link_lhu: gizi.link_lhu
-    })
-    setEditingId(gizi.id)
-    setShowForm(true)
-  }
-
-  const handleDelete = async (id) => {
-    if (confirm('Yakin ingin menghapus data ini?')) {
-      setGiziList(prev => prev.filter(item => item.id !== id))
-      alert('Data berhasil dihapus!')
-    }
-  }
-
   const resetForm = () => {
     setFormData({
       nib: '',

@@ -164,6 +164,47 @@ export default function PelatihanPage() {
   const [showPesertaModal, setShowPesertaModal] = useState(false)
   const [selectedPelatihanId, setSelectedPelatihanId] = useState(null)
 
+  // Save form data to localStorage when it changes
+  useEffect(() => {
+    if (jenisFormData.jenis_pelatihan || jenisFormData.sub_kegiatan) {
+      localStorage.setItem('jenisFormData', JSON.stringify(jenisFormData))
+    }
+  }, [jenisFormData])
+
+  useEffect(() => {
+    if (pesertaFormData.nib || pesertaFormData.nama_lengkap) {
+      localStorage.setItem('pesertaFormData', JSON.stringify(pesertaFormData))
+    }
+  }, [pesertaFormData])
+
+  // Restore form data from localStorage on component mount
+  useEffect(() => {
+    const savedJenisForm = localStorage.getItem('jenisFormData')
+    const savedPesertaForm = localStorage.getItem('pesertaFormData')
+    
+    if (savedJenisForm) {
+      try {
+        const parsedJenisForm = JSON.parse(savedJenisForm)
+        if (parsedJenisForm.jenis_pelatihan || parsedJenisForm.sub_kegiatan) {
+          setJenisFormData(parsedJenisForm)
+        }
+      } catch (error) {
+        console.error('Error parsing saved jenis form data:', error)
+      }
+    }
+    
+    if (savedPesertaForm) {
+      try {
+        const parsedPesertaForm = JSON.parse(savedPesertaForm)
+        if (parsedPesertaForm.nib || parsedPesertaForm.nama_lengkap) {
+          setPesertaFormData(parsedPesertaForm)
+        }
+      } catch (error) {
+        console.error('Error parsing saved peserta form data:', error)
+      }
+    }
+  }, [])
+
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn')
     if (!isLoggedIn) {
@@ -171,10 +212,43 @@ export default function PelatihanPage() {
       return
     }
     
-    setJenisPelatihanList(jenisPelatihanData)
-    setPesertaList(pesertaPelatihanData)
-    setLoading(false)
+    loadData()
   }, [router])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      
+      // Load Jenis Pelatihan data from API
+      const jenisResponse = await fetch('/api/jenis-pelatihan')
+      const jenisResult = await jenisResponse.json()
+      
+      if (jenisResult.success) {
+        setJenisPelatihanList(jenisResult.data)
+      } else {
+        console.error('Error loading Jenis Pelatihan:', jenisResult.error)
+        setJenisPelatihanList(jenisPelatihanData) // fallback to dummy data
+      }
+      
+      // Load Peserta Pelatihan data from API
+      const pesertaResponse = await fetch('/api/pelatihan')
+      const pesertaResult = await pesertaResponse.json()
+      
+      if (pesertaResult.success) {
+        setPesertaList(pesertaResult.data)
+      } else {
+        console.error('Error loading Peserta Pelatihan:', pesertaResult.error)
+        setPesertaList(pesertaPelatihanData) // fallback to dummy data
+      }
+    } catch (error) {
+      console.error('Error loading data:', error)
+      // Use dummy data as fallback
+      setJenisPelatihanList(jenisPelatihanData)
+      setPesertaList(pesertaPelatihanData)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Fungsi untuk menghitung jumlah peserta per pelatihan
   const getJumlahPeserta = (pelatihanId) => {
@@ -226,42 +300,43 @@ export default function PelatihanPage() {
       alert('Gagal mencari data IKM Binaan')
     }
   }
-        alamat_lengkap: found.alamat_lengkap,
-        nama_usaha: found.nama_usaha,
-        nomor_hp: found.nomor_hp
-      }))
-      alert('Data IKM Binaan ditemukan dan berhasil dimuat!')
-    } else {
-      alert('Data IKM Binaan tidak ditemukan')
-    }
-  }
 
   // Handle submit jenis pelatihan
-  const handleJenisSubmit = (e) => {
+  const handleJenisSubmit = async (e) => {
     e.preventDefault()
     
-    if (editingJenisId) {
-      setJenisPelatihanList(prev => prev.map(item => 
-        item.id === editingJenisId 
-          ? { ...item, ...jenisFormData }
-          : item
-      ))
-      alert('Jenis Pelatihan berhasil diperbarui!')
-    } else {
-      const newJenis = {
-        id: Date.now().toString(),
-        ...jenisFormData,
-        created_at: new Date().toISOString()
+    try {
+      const method = editingJenisId ? 'PUT' : 'POST'
+      const body = editingJenisId 
+        ? { id: editingJenisId, ...jenisFormData }
+        : jenisFormData
+
+      const response = await fetch('/api/jenis-pelatihan', {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Reload data
+        await loadData()
+        alert(editingJenisId ? 'Jenis Pelatihan berhasil diperbarui!' : 'Jenis Pelatihan berhasil ditambahkan!')
+        resetJenisForm()
+      } else {
+        alert('Gagal menyimpan data: ' + result.error)
       }
-      setJenisPelatihanList(prev => [newJenis, ...prev])
-      alert('Jenis Pelatihan berhasil ditambahkan!')
+    } catch (error) {
+      console.error('Error saving jenis pelatihan:', error)
+      alert('Gagal menyimpan data jenis pelatihan')
     }
-    
-    resetJenisForm()
   }
 
   // Handle submit peserta
-  const handlePesertaSubmit = (e) => {
+  const handlePesertaSubmit = async (e) => {
     e.preventDefault()
     
     if (pesertaFormData.pelatihan_ids.length === 0) {
@@ -269,36 +344,73 @@ export default function PelatihanPage() {
       return
     }
 
-    // Buat entry peserta untuk setiap pelatihan yang dipilih
-    pesertaFormData.pelatihan_ids.forEach(pelatihanId => {
-      const newPeserta = {
-        id: Date.now().toString() + '_' + pelatihanId,
-        pelatihan_id: pelatihanId,
-        nib: pesertaFormData.nib,
-        nik: pesertaFormData.nik,
-        nama_lengkap: pesertaFormData.nama_lengkap,
-        alamat_lengkap: pesertaFormData.alamat_lengkap,
-        nama_usaha: pesertaFormData.nama_usaha,
-        nomor_hp: pesertaFormData.nomor_hp,
-        sertifikat: pesertaFormData.sertifikat,
-        created_at: new Date().toISOString()
+    try {
+      // First, find or create IKM Binaan record
+      const ikmResponse = await fetch('/api/ikm-binaan')
+      const ikmResult = await ikmResponse.json()
+      
+      let ikmId = null
+      if (ikmResult.success) {
+        const existingIkm = ikmResult.data.find(ikm => ikm.nib === pesertaFormData.nib)
+        if (existingIkm) {
+          ikmId = existingIkm.id
+        }
       }
-      setPesertaList(prev => [newPeserta, ...prev])
-    })
-    
-    alert('Peserta berhasil didaftarkan ke pelatihan yang dipilih!')
-    resetPesertaForm()
+
+      // If IKM not found, we need the IKM ID from the search
+      if (!ikmId) {
+        alert('Data IKM Binaan tidak ditemukan. Pastikan data sudah tersimpan di sistem.')
+        return
+      }
+
+      // Create pelatihan entries for each selected jenis pelatihan
+      for (const jenisId of pesertaFormData.pelatihan_ids) {
+        const pelatihanData = {
+          ikm_id: ikmId,
+          jenis_pelatihan_id: jenisId,
+          nama_pelatihan: jenisPelatihanList.find(j => j.id === jenisId)?.jenis_pelatihan || '',
+          tanggal_pelatihan: new Date().toISOString().split('T')[0], // Today's date as default
+          sertifikat: pesertaFormData.sertifikat
+        }
+
+        const response = await fetch('/api/pelatihan', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(pelatihanData)
+        })
+
+        const result = await response.json()
+        if (!result.success) {
+          console.error('Error creating pelatihan:', result.error)
+        }
+      }
+
+      // Reload data
+      await loadData()
+      alert('Peserta berhasil didaftarkan ke pelatihan yang dipilih!')
+      resetPesertaForm()
+    } catch (error) {
+      console.error('Error saving peserta:', error)
+      alert('Gagal menyimpan data peserta')
+    }
   }
 
   const resetJenisForm = () => {
     setJenisFormData({
       jenis_pelatihan: '',
       sub_kegiatan: '',
+      waktu_pelaksanaan: '',
+      tempat: '',
+      link_materi: '',
       tahun_pelaksanaan: new Date().getFullYear(),
       status: 'Aktif'
     })
     setEditingJenisId(null)
     setShowJenisForm(false)
+    // Clear saved form data
+    localStorage.removeItem('jenisFormData')
   }
 
   const resetPesertaForm = () => {
@@ -315,6 +427,8 @@ export default function PelatihanPage() {
     })
     setEditingPesertaId(null)
     setShowPesertaForm(false)
+    // Clear saved form data
+    localStorage.removeItem('pesertaFormData')
   }
 
   // Handle edit jenis pelatihan
@@ -322,6 +436,9 @@ export default function PelatihanPage() {
     setJenisFormData({
       jenis_pelatihan: jenis.jenis_pelatihan,
       sub_kegiatan: jenis.sub_kegiatan,
+      waktu_pelaksanaan: jenis.waktu_pelaksanaan || '',
+      tempat: jenis.tempat || '',
+      link_materi: jenis.link_materi || '',
       tahun_pelaksanaan: jenis.tahun_pelaksanaan,
       status: jenis.status
     })
@@ -330,10 +447,29 @@ export default function PelatihanPage() {
   }
 
   // Handle delete jenis pelatihan
-  const handleDeleteJenis = (id) => {
+  const handleDeleteJenis = async (id) => {
     if (confirm('Yakin ingin menghapus jenis pelatihan ini?')) {
-      setJenisPelatihanList(prev => prev.filter(item => item.id !== id))
-      alert('Jenis Pelatihan berhasil dihapus!')
+      try {
+        const response = await fetch('/api/jenis-pelatihan', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id })
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+          await loadData()
+          alert('Jenis Pelatihan berhasil dihapus!')
+        } else {
+          alert('Gagal menghapus data: ' + result.error)
+        }
+      } catch (error) {
+        console.error('Error deleting jenis pelatihan:', error)
+        alert('Gagal menghapus data jenis pelatihan')
+      }
     }
   }
 
@@ -584,23 +720,25 @@ export default function PelatihanPage() {
                       </tr>
                     ) : (
                       pesertaList.map((peserta, index) => {
-                        const jenisPelatihan = jenisPelatihanList.find(j => j.id === peserta.pelatihan_id)
+                        const jenisPelatihan = peserta.jenis_pelatihan || 
+                          jenisPelatihanList.find(j => j.id === peserta.jenis_pelatihan_id) ||
+                          jenisPelatihanList.find(j => j.id === peserta.pelatihan_id)
                         return (
                           <tr key={peserta.id} className="hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm">{index + 1}</td>
                             <td className="px-4 py-3 text-sm">
                               <div>
-                                <div className="font-mono text-xs">{peserta.nib}</div>
-                                <div className="font-mono text-xs text-gray-500">{peserta.nik}</div>
+                                <div className="font-mono text-xs">{peserta.ikm_binaan?.nib || peserta.nib}</div>
+                                <div className="font-mono text-xs text-gray-500">{peserta.ikm_binaan?.nik || peserta.nik}</div>
                               </div>
                             </td>
                             <td className="px-4 py-3 text-sm">
                               <div>
-                                <div className="font-medium">{peserta.nama_lengkap}</div>
-                                <div className="text-gray-500">{peserta.nama_usaha}</div>
+                                <div className="font-medium">{peserta.ikm_binaan?.nama_lengkap || peserta.nama_lengkap}</div>
+                                <div className="text-gray-500">{peserta.ikm_binaan?.nama_usaha || peserta.nama_usaha}</div>
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-sm">{jenisPelatihan?.jenis_pelatihan || 'N/A'}</td>
+                            <td className="px-4 py-3 text-sm">{jenisPelatihan?.jenis_pelatihan || peserta.nama_pelatihan || 'N/A'}</td>
                             <td className="px-4 py-3 text-sm">
                               {peserta.sertifikat ? (
                                 <a
