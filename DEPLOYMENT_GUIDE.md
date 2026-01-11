@@ -17,9 +17,9 @@ NEXT_PUBLIC_DASHBOARD_REFRESH_INTERVAL=15000
 NODE_ENV=production
 ```
 
-### URL Configuration (akan diupdate otomatis setelah deploy)
+### URL Configuration
 ```
-NEXT_PUBLIC_API_BASE_URL=https://your-app-name.vercel.app
+NEXT_PUBLIC_API_BASE_URL=https://ikm-juara-dashboard.vercel.app
 ```
 
 ## Langkah Deploy ke Vercel
