@@ -1,0 +1,13 @@
+{
+  "repoName": "ikm-juara-dashboard",
+  "description": "Dashboard sistem database IKM JUARA untuk DisnakerKUKM Kota Madiun",
+  "setupFiles": [
+    "github-setup.bat",
+    "github-setup.sh"
+  ],
+  "instructions": {
+    "github": "https://github.com/new",
+    "vercel": "https://vercel.com/dashboard"
+  },
+  "timestamp": "2026-01-11T17:26:13.280Z"
+}
