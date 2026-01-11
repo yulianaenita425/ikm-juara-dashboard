@@ -63,6 +63,7 @@ const dummyData = [
 export default function UjiNilaiGiziPage() {
   const router = useRouter()
   const [giziList, setGiziList] = useState([])
+  const [ikmBinaanList, setIkmBinaanList] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -95,12 +96,44 @@ export default function UjiNilaiGiziPage() {
       return
     }
     
-    setGiziList(dummyData)
-    setLoading(false)
+    // Load data from Supabase API
+    loadData()
   }, [router])
 
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      
+      // Load Uji Nilai Gizi data
+      const giziResponse = await fetch('/api/uji-nilai-gizi')
+      const giziResult = await giziResponse.json()
+      
+      if (giziResult.success) {
+        setGiziList(giziResult.data)
+      } else {
+        console.error('Error loading Uji Nilai Gizi data:', giziResult.error)
+      }
+      
+      // Load IKM Binaan data for dropdown
+      const ikmResponse = await fetch('/api/ikm-binaan')
+      const ikmResult = await ikmResponse.json()
+      
+      if (ikmResult.success) {
+        setIkmBinaanList(ikmResult.data)
+      } else {
+        console.error('Error loading IKM data:', ikmResult.error)
+        setIkmBinaanList(ikmBinaanData) // fallback to dummy data
+      }
+    } catch (error) {
+      console.error('Error loading data:', error)
+      setIkmBinaanList(ikmBinaanData) // fallback to dummy data
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Filter IKM Binaan berdasarkan pencarian
-  const filteredIkmBinaan = ikmBinaanData.filter(ikm => 
+  const filteredIkmBinaan = ikmBinaanList.filter(ikm => 
     ikm.nib.includes(ikmSearchTerm) ||
     ikm.nik.includes(ikmSearchTerm) ||
     ikm.nama_lengkap.toLowerCase().includes(ikmSearchTerm.toLowerCase())
@@ -125,27 +158,107 @@ export default function UjiNilaiGiziPage() {
     e.preventDefault()
     
     try {
-      if (editingId) {
-        // Update existing
-        setGiziList(prev => prev.map(item => 
-          item.id === editingId 
-            ? { ...item, ...formData }
-            : item
-        ))
+      const method = editingId ? 'PUT' : 'POST'
+      const body = editingId 
+        ? { 
+            id: editingId, 
+            ikm_id: selectedIkm?.id || formData.ikm_id,
+            nomor_lhu: formData.nomor_lhu,
+            tanggal_hasil_uji: formData.tanggal_hasil_uji,
+            tahun_fasilitasi: formData.tahun_fasilitasi,
+            link_lhu: formData.link_lhu
+          }
+        : {
+            ikm_id: selectedIkm?.id,
+            nomor_lhu: formData.nomor_lhu,
+            tanggal_hasil_uji: formData.tanggal_hasil_uji,
+            tahun_fasilitasi: formData.tahun_fasilitasi,
+            link_lhu: formData.link_lhu
+          }
+
+      const response = await fetch('/api/uji-nilai-gizi', {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Reload data
+        await loadData()
+        resetForm()
+        alert(result.message || 'Data Uji Nilai Gizi berhasil disimpan!')
       } else {
-        // Add new
-        const newGizi = {
-          id: Date.now().toString(),
-          ...formData
-        }
-        setGiziList(prev => [newGizi, ...prev])
+        alert(result.error || 'Gagal menyimpan data')
       }
-      
-      resetForm()
-      alert('Data Uji Nilai Gizi berhasil disimpan!')
     } catch (error) {
       console.error('Error saving Uji Nilai Gizi:', error)
       alert('Gagal menyimpan data')
+    }
+  }
+
+  const handleEdit = (gizi) => {
+    // Set data IKM Binaan dari relasi atau data yang ada
+    const ikmData = gizi.ikm_binaan || {
+      id: gizi.ikm_id,
+      nib: gizi.nib,
+      nik: gizi.nik,
+      nama_lengkap: gizi.nama_lengkap,
+      alamat_lengkap: gizi.alamat_lengkap,
+      nama_usaha: gizi.nama_usaha,
+      nomor_hp: gizi.nomor_hp
+    }
+    
+    setSelectedIkm(ikmData)
+    setFormData({
+      nib: ikmData.nib || '',
+      nik: ikmData.nik || '',
+      nama_lengkap: ikmData.nama_lengkap || '',
+      alamat_lengkap: ikmData.alamat_lengkap || '',
+      nama_usaha: ikmData.nama_usaha || '',
+      nomor_hp: ikmData.nomor_hp || '',
+      nomor_lhu: gizi.nomor_lhu || '',
+      tanggal_hasil_uji: gizi.tanggal_hasil_uji || '',
+      tahun_fasilitasi: gizi.tahun_fasilitasi || new Date().getFullYear(),
+      link_lhu: gizi.link_lhu || '',
+      ikm_id: gizi.ikm_id
+    })
+    setEditingId(gizi.id)
+    setShowForm(true)
+  }
+
+  const handleDelete = async (id) => {
+    const itemToDelete = giziList.find(item => item.id === id)
+    if (!itemToDelete) {
+      alert('Data tidak ditemukan!')
+      return
+    }
+
+    if (confirm(`Yakin ingin menghapus data Uji Nilai Gizi "${itemToDelete.nomor_lhu}" untuk ${itemToDelete.ikm_binaan?.nama_usaha || 'IKM'}? Data akan dipindahkan ke Recycle Bin.`)) {
+      try {
+        const response = await fetch('/api/uji-nilai-gizi', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id })
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+          await loadData() // Reload data
+          alert(result.message || 'Data berhasil dihapus')
+        } else {
+          alert(result.error || 'Gagal menghapus data')
+        }
+      } catch (error) {
+        console.error('Error deleting Uji Nilai Gizi:', error)
+        alert('Gagal menghapus data')
+      }
     }
   }
 

@@ -130,10 +130,12 @@ export default function LaporanPage() {
   const [filters, setFilters] = useState({
     jenis_layanan: '',
     tahun: new Date().getFullYear(),
-    bulan: ''
+    bulan: '',
+    pelatihan_id: '' // Filter khusus untuk pelatihan
   })
   const [filteredData, setFilteredData] = useState([])
   const [showFilters, setShowFilters] = useState(false)
+  const [pelatihanList, setPelatihanList] = useState([]) // List pelatihan untuk filter
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn')
@@ -144,8 +146,25 @@ export default function LaporanPage() {
       return
     }
     
+    // Load data pelatihan untuk filter
+    loadPelatihanData()
     setLoading(false)
   }, [router])
+
+  const loadPelatihanData = async () => {
+    try {
+      const response = await fetch('/api/jenis-pelatihan')
+      const result = await response.json()
+      
+      if (result.success) {
+        setPelatihanList(result.data)
+      } else {
+        console.error('Error loading pelatihan data:', result.error)
+      }
+    } catch (error) {
+      console.error('Error loading pelatihan data:', error)
+    }
+  }
 
   useEffect(() => {
     // Filter data berdasarkan kriteria yang dipilih
@@ -168,6 +187,14 @@ export default function LaporanPage() {
         })
       }
       
+      // Filter khusus untuk pelatihan berdasarkan jenis pelatihan
+      if (filters.jenis_layanan === 'pelatihan' && filters.pelatihan_id) {
+        data = data.filter(item => {
+          return item.pelatihan_id === filters.pelatihan_id || 
+                 item.jenis_pelatihan_id === filters.pelatihan_id
+        })
+      }
+      
       setFilteredData(data)
     } else {
       setFilteredData([])
@@ -185,7 +212,8 @@ export default function LaporanPage() {
     setFilters({
       jenis_layanan: '',
       tahun: new Date().getFullYear(),
-      bulan: ''
+      bulan: '',
+      pelatihan_id: ''
     })
   }
 
@@ -343,7 +371,7 @@ export default function LaporanPage() {
           </div>
 
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Jenis Layanan *
@@ -409,6 +437,27 @@ export default function LaporanPage() {
                   ))}
                 </select>
               </div>
+
+              {/* Filter khusus untuk pelatihan */}
+              {filters.jenis_layanan === 'pelatihan' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Jenis Pelatihan
+                  </label>
+                  <select
+                    value={filters.pelatihan_id}
+                    onChange={(e) => handleFilterChange('pelatihan_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Semua Pelatihan</option>
+                    {pelatihanList.map(pelatihan => (
+                      <option key={pelatihan.id} value={pelatihan.id}>
+                        {pelatihan.jenis_pelatihan}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="flex items-end space-x-2">
                 <button

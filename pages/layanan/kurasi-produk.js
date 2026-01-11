@@ -61,6 +61,7 @@ const dummyData = [
 export default function KurasiProdukPage() {
   const router = useRouter()
   const [kurasiList, setKurasiList] = useState([])
+  const [ikmBinaanList, setIkmBinaanList] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -91,12 +92,44 @@ export default function KurasiProdukPage() {
       return
     }
     
-    setKurasiList(dummyData)
-    setLoading(false)
+    // Load data from Supabase API
+    loadData()
   }, [router])
 
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      
+      // Load Kurasi Produk data
+      const kurasiResponse = await fetch('/api/kurasi-produk')
+      const kurasiResult = await kurasiResponse.json()
+      
+      if (kurasiResult.success) {
+        setKurasiList(kurasiResult.data)
+      } else {
+        console.error('Error loading Kurasi Produk data:', kurasiResult.error)
+      }
+      
+      // Load IKM Binaan data for dropdown
+      const ikmResponse = await fetch('/api/ikm-binaan')
+      const ikmResult = await ikmResponse.json()
+      
+      if (ikmResult.success) {
+        setIkmBinaanList(ikmResult.data)
+      } else {
+        console.error('Error loading IKM data:', ikmResult.error)
+        setIkmBinaanList(ikmBinaanData) // fallback to dummy data
+      }
+    } catch (error) {
+      console.error('Error loading data:', error)
+      setIkmBinaanList(ikmBinaanData) // fallback to dummy data
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Filter IKM Binaan berdasarkan pencarian
-  const filteredIkmBinaan = ikmBinaanData.filter(ikm => 
+  const filteredIkmBinaan = ikmBinaanList.filter(ikm => 
     ikm.nib.includes(ikmSearchTerm) ||
     ikm.nik.includes(ikmSearchTerm) ||
     ikm.nama_lengkap.toLowerCase().includes(ikmSearchTerm.toLowerCase())
@@ -121,24 +154,38 @@ export default function KurasiProdukPage() {
     e.preventDefault()
     
     try {
-      if (editingId) {
-        // Update existing
-        setKurasiList(prev => prev.map(item => 
-          item.id === editingId 
-            ? { ...item, ...formData }
-            : item
-        ))
+      const method = editingId ? 'PUT' : 'POST'
+      const body = editingId 
+        ? { 
+            id: editingId, 
+            ikm_id: selectedIkm?.id || formData.ikm_id,
+            nomor_sertifikat: formData.nomor_sertifikat,
+            link_sertifikat: formData.link_sertifikat
+          }
+        : {
+            ikm_id: selectedIkm?.id,
+            nomor_sertifikat: formData.nomor_sertifikat,
+            link_sertifikat: formData.link_sertifikat
+          }
+
+      const response = await fetch('/api/kurasi-produk', {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // Reload data
+        await loadData()
+        resetForm()
+        alert(result.message || 'Data Kurasi Produk berhasil disimpan!')
       } else {
-        // Add new
-        const newKurasi = {
-          id: Date.now().toString(),
-          ...formData
-        }
-        setKurasiList(prev => [newKurasi, ...prev])
+        alert(result.error || 'Gagal menyimpan data')
       }
-      
-      resetForm()
-      alert('Data Kurasi Produk berhasil disimpan!')
     } catch (error) {
       console.error('Error saving Kurasi Produk:', error)
       alert('Gagal menyimpan data')
@@ -146,11 +193,64 @@ export default function KurasiProdukPage() {
   }
 
   const handleEdit = (kurasi) => {
-    setFormData({
+    // Set data IKM Binaan dari relasi atau data yang ada
+    const ikmData = kurasi.ikm_binaan || {
+      id: kurasi.ikm_id,
       nib: kurasi.nib,
       nik: kurasi.nik,
       nama_lengkap: kurasi.nama_lengkap,
       alamat_lengkap: kurasi.alamat_lengkap,
+      nama_usaha: kurasi.nama_usaha,
+      nomor_hp: kurasi.nomor_hp
+    }
+    
+    setSelectedIkm(ikmData)
+    setFormData({
+      nib: ikmData.nib || '',
+      nik: ikmData.nik || '',
+      nama_lengkap: ikmData.nama_lengkap || '',
+      alamat_lengkap: ikmData.alamat_lengkap || '',
+      nama_usaha: ikmData.nama_usaha || '',
+      nomor_hp: ikmData.nomor_hp || '',
+      nomor_sertifikat: kurasi.nomor_sertifikat || '',
+      link_sertifikat: kurasi.link_sertifikat || '',
+      ikm_id: kurasi.ikm_id
+    })
+    setEditingId(kurasi.id)
+    setShowForm(true)
+  }
+
+  const handleDelete = async (id) => {
+    const itemToDelete = kurasiList.find(item => item.id === id)
+    if (!itemToDelete) {
+      alert('Data tidak ditemukan!')
+      return
+    }
+
+    if (confirm(`Yakin ingin menghapus data Kurasi Produk "${itemToDelete.nomor_sertifikat}" untuk ${itemToDelete.ikm_binaan?.nama_usaha || 'IKM'}? Data akan dipindahkan ke Recycle Bin.`)) {
+      try {
+        const response = await fetch('/api/kurasi-produk', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ id })
+        })
+
+        const result = await response.json()
+
+        if (result.success) {
+          await loadData() // Reload data
+          alert(result.message || 'Data berhasil dihapus')
+        } else {
+          alert(result.error || 'Gagal menghapus data')
+        }
+      } catch (error) {
+        console.error('Error deleting Kurasi Produk:', error)
+        alert('Gagal menghapus data')
+      }
+    }
+  }
       nama_usaha: kurasi.nama_usaha,
       nomor_hp: kurasi.nomor_hp,
       nomor_sertifikat: kurasi.nomor_sertifikat,

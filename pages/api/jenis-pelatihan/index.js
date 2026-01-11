@@ -1,4 +1,4 @@
-// API endpoint untuk CRUD Sertifikat Halal
+// API endpoint untuk CRUD Jenis Pelatihan
 import { supabaseAdmin } from '../../../lib/supabase'
 
 export default async function handler(req, res) {
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' })
     }
   } catch (error) {
-    console.error('Sertifikat Halal API error:', error)
+    console.error('Jenis Pelatihan API error:', error)
     return res.status(500).json({
       error: 'Internal server error',
       details: error.message
@@ -30,27 +30,15 @@ export default async function handler(req, res) {
   }
 }
 
-// GET - Ambil semua data Sertifikat Halal dengan join IKM Binaan
+// GET - Ambil semua data Jenis Pelatihan
 async function handleGet(req, res) {
   const { data, error } = await supabaseAdmin
-    .from('sertifikat_halal')
-    .select(`
-      *,
-      ikm_binaan:ikm_id (
-        id,
-        nib,
-        nik,
-        nama_lengkap,
-        alamat_lengkap,
-        nama_usaha,
-        nomor_hp
-      )
-    `)
+    .from('jenis_pelatihan')
+    .select('*')
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Supabase error:', error)
     throw error
   }
 
@@ -60,82 +48,62 @@ async function handleGet(req, res) {
   })
 }
 
-// POST - Tambah data Sertifikat Halal baru
+// POST - Tambah data Jenis Pelatihan baru
 async function handlePost(req, res) {
   const { 
-    ikm_id, 
-    nomor_sertifikat, 
-    link_sertifikat, 
-    logo_halal,
-    tahun_fasilitasi 
+    jenis_pelatihan, 
+    sub_kegiatan, 
+    waktu_pelaksanaan,
+    tempat,
+    link_materi,
+    tahun_pelaksanaan,
+    status
   } = req.body
 
   // Validasi input
-  if (!ikm_id || !nomor_sertifikat || !link_sertifikat || !tahun_fasilitasi) {
+  if (!jenis_pelatihan || !sub_kegiatan || !waktu_pelaksanaan || !tempat || !tahun_pelaksanaan) {
     return res.status(400).json({
-      error: 'Semua field wajib diisi'
-    })
-  }
-
-  // Cek apakah IKM Binaan exists
-  const { data: ikmExists } = await supabaseAdmin
-    .from('ikm_binaan')
-    .select('id')
-    .eq('id', ikm_id)
-    .is('deleted_at', null)
-    .single()
-
-  if (!ikmExists) {
-    return res.status(400).json({
-      error: 'IKM Binaan tidak ditemukan'
+      error: 'Field jenis_pelatihan, sub_kegiatan, waktu_pelaksanaan, tempat, dan tahun_pelaksanaan wajib diisi'
     })
   }
 
   // Insert data baru
   const { data, error } = await supabaseAdmin
-    .from('sertifikat_halal')
+    .from('jenis_pelatihan')
     .insert([{
-      ikm_id,
-      nomor_sertifikat,
-      link_sertifikat,
-      logo_halal: logo_halal || null,
-      tahun_fasilitasi
+      jenis_pelatihan,
+      sub_kegiatan,
+      waktu_pelaksanaan,
+      tempat,
+      link_materi: link_materi || null,
+      tahun_pelaksanaan,
+      status: status || 'Aktif'
     }])
-    .select(`
-      *,
-      ikm_binaan:ikm_id (
-        id,
-        nib,
-        nik,
-        nama_lengkap,
-        alamat_lengkap,
-        nama_usaha,
-        nomor_hp
-      )
-    `)
+    .select()
     .single()
 
   if (error) {
-    console.error('Supabase error:', error)
     throw error
   }
 
   return res.status(201).json({
     success: true,
     data: data,
-    message: 'Data Sertifikat Halal berhasil ditambahkan'
+    message: 'Jenis Pelatihan berhasil ditambahkan'
   })
 }
 
-// PUT - Update data Sertifikat Halal
+// PUT - Update data Jenis Pelatihan
 async function handlePut(req, res) {
   const { 
     id, 
-    ikm_id, 
-    nomor_sertifikat, 
-    link_sertifikat, 
-    logo_halal,
-    tahun_fasilitasi 
+    jenis_pelatihan, 
+    sub_kegiatan, 
+    waktu_pelaksanaan,
+    tempat,
+    link_materi,
+    tahun_pelaksanaan,
+    status
   } = req.body
 
   if (!id) {
@@ -146,43 +114,33 @@ async function handlePut(req, res) {
 
   // Update data
   const { data, error } = await supabaseAdmin
-    .from('sertifikat_halal')
+    .from('jenis_pelatihan')
     .update({
-      ikm_id,
-      nomor_sertifikat,
-      link_sertifikat,
-      logo_halal: logo_halal || null,
-      tahun_fasilitasi,
+      jenis_pelatihan,
+      sub_kegiatan,
+      waktu_pelaksanaan,
+      tempat,
+      link_materi: link_materi || null,
+      tahun_pelaksanaan,
+      status,
       updated_at: new Date().toISOString()
     })
     .eq('id', id)
-    .select(`
-      *,
-      ikm_binaan:ikm_id (
-        id,
-        nib,
-        nik,
-        nama_lengkap,
-        alamat_lengkap,
-        nama_usaha,
-        nomor_hp
-      )
-    `)
+    .select()
     .single()
 
   if (error) {
-    console.error('Supabase error:', error)
     throw error
   }
 
   return res.status(200).json({
     success: true,
     data: data,
-    message: 'Data Sertifikat Halal berhasil diupdate'
+    message: 'Jenis Pelatihan berhasil diupdate'
   })
 }
 
-// DELETE - Soft delete Sertifikat Halal
+// DELETE - Soft delete Jenis Pelatihan
 async function handleDelete(req, res) {
   const { id } = req.body
 
@@ -194,22 +152,25 @@ async function handleDelete(req, res) {
 
   // Soft delete
   const { data, error } = await supabaseAdmin
-    .from('sertifikat_halal')
+    .from('jenis_pelatihan')
     .update({
       deleted_at: new Date().toISOString()
     })
     .eq('id', id)
     .select()
-    .single()
 
   if (error) {
-    console.error('Supabase error:', error)
     throw error
+  }
+
+  if (!data || data.length === 0) {
+    return res.status(404).json({
+      error: 'Jenis Pelatihan tidak ditemukan'
+    })
   }
 
   return res.status(200).json({
     success: true,
-    data: data,
-    message: 'Data Sertifikat Halal berhasil dihapus'
+    message: 'Jenis Pelatihan berhasil dihapus'
   })
 }

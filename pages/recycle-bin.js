@@ -19,21 +19,49 @@ export default function RecycleBinPage() {
     loadDeletedItems()
   }, [router])
 
-  const loadDeletedItems = () => {
-    // Supabase menggunakan soft delete (deleted_at field)
-    // Data yang dihapus tidak ditampilkan di recycle bin
-    // Untuk implementasi recycle bin yang proper, perlu API khusus
-    setDeletedItems([])
-    setLoading(false)
+  const loadDeletedItems = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/recycle-bin')
+      const result = await response.json()
+      
+      if (result.success) {
+        setDeletedItems(result.data)
+      } else {
+        console.error('Error loading deleted items:', result.error)
+        setDeletedItems([])
+      }
+    } catch (error) {
+      console.error('Error loading deleted items:', error)
+      setDeletedItems([])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleRestore = async (recycleBinId) => {
+  const handleRestore = async (recycleBinId, tableName) => {
     if (confirm('Yakin ingin mengembalikan data ini ke tempat semula?')) {
       try {
-        // TODO: Implement restore API untuk mengembalikan deleted_at = null
-        console.log('Restore item:', recycleBinId)
-        loadDeletedItems() // Refresh the list
-        alert('Data berhasil dikembalikan!')
+        const response = await fetch('/api/recycle-bin', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'restore',
+            id: recycleBinId,
+            table: tableName
+          })
+        })
+        
+        const result = await response.json()
+        
+        if (result.success) {
+          loadDeletedItems() // Refresh the list
+          alert('Data berhasil dikembalikan!')
+        } else {
+          alert('Gagal mengembalikan data: ' + result.error)
+        }
       } catch (error) {
         console.error('Error restoring item:', error)
         alert('Gagal mengembalikan data. Silakan coba lagi.')
@@ -41,16 +69,31 @@ export default function RecycleBinPage() {
     }
   }
 
-  const handlePermanentDelete = async (recycleBinId) => {
-    const item = deletedItems.find(item => item.recycleBinId === recycleBinId)
-    const itemName = item?.nama_lengkap || item?.nama_usaha || item?.nama_pelatihan || 'Item'
+  const handlePermanentDelete = async (recycleBinId, tableName) => {
+    const item = deletedItems.find(item => item.id === recycleBinId)
+    const itemName = item?.nama_lengkap || item?.nama_usaha || item?.jenis_pelatihan || 'Item'
     
     if (confirm(`PERINGATAN: Data "${itemName}" akan dihapus secara permanen dan tidak dapat dikembalikan. Yakin ingin melanjutkan?`)) {
       try {
-        // TODO: Implement permanent delete API
-        console.log('Permanent delete item:', recycleBinId)
-        loadDeletedItems() // Refresh the list
-        alert('Data berhasil dihapus secara permanen!')
+        const response = await fetch('/api/recycle-bin', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: recycleBinId,
+            table: tableName
+          })
+        })
+        
+        const result = await response.json()
+        
+        if (result.success) {
+          loadDeletedItems() // Refresh the list
+          alert('Data berhasil dihapus secara permanen!')
+        } else {
+          alert('Gagal menghapus data: ' + result.error)
+        }
       } catch (error) {
         console.error('Error permanently deleting item:', error)
         alert('Gagal menghapus data. Silakan coba lagi.')
@@ -145,16 +188,23 @@ export default function RecycleBinPage() {
                       <td className="px-4 py-3 text-sm">
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleRestore(item.recycleBinId)}
+                            onClick={() => handleRestore(item.recycleBinId, item.originalTable)}
                             className="text-green-600 hover:text-green-800 p-1"
                             title="Kembalikan"
                           >
                             <ArrowPathIcon className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => handlePermanentDelete(item.recycleBinId)}
+                            onClick={() => handlePermanentDelete(item.recycleBinId, item.originalTable)}
                             className="text-red-600 hover:text-red-800 p-1"
                             title="Hapus Permanen"
+                          >
+                            <XMarkIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                           >
                             <XMarkIcon className="h-4 w-4" />
                           </button>

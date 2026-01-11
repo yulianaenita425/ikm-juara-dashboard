@@ -170,6 +170,8 @@ export default function TKDNIKPage() {
       const submitData = {
         ikm_id: selectedIkm?.id || formData.ikm_id,
         nomor_sertifikat: formData.nomor_sertifikat,
+        persentase_tkdn: parseFloat(formData.persentase_tkdn) || 0,
+        status_sertifikat: formData.status_sertifikat,
         link_sertifikat: formData.link_sertifikat,
         tahun_terbit: formData.tahun_fasilitasi
       }
@@ -205,7 +207,7 @@ export default function TKDNIKPage() {
         resetForm()
         alert('Data TKDN-IK berhasil disimpan!')
       } else {
-        throw new Error(result.message)
+        throw new Error(result.error || result.message)
       }
     } catch (error) {
       console.error('Error saving TKDN-IK:', error)
@@ -214,18 +216,31 @@ export default function TKDNIKPage() {
   }
 
   const handleEdit = (tkdn) => {
-    setFormData({
+    // Set data IKM Binaan dari relasi atau data yang ada
+    const ikmData = tkdn.ikm_binaan || {
+      id: tkdn.ikm_id,
       nib: tkdn.nib,
       nik: tkdn.nik,
       nama_lengkap: tkdn.nama_lengkap,
       alamat_lengkap: tkdn.alamat_lengkap,
       nama_usaha: tkdn.nama_usaha,
-      nomor_hp: tkdn.nomor_hp,
-      nomor_sertifikat: tkdn.nomor_sertifikat,
-      persentase_tkdn: tkdn.persentase_tkdn,
-      status_sertifikat: tkdn.status_sertifikat,
-      tahun_fasilitasi: tkdn.tahun_fasilitasi,
-      link_sertifikat: tkdn.link_sertifikat
+      nomor_hp: tkdn.nomor_hp
+    }
+    
+    setSelectedIkm(ikmData)
+    setFormData({
+      nib: ikmData.nib || '',
+      nik: ikmData.nik || '',
+      nama_lengkap: ikmData.nama_lengkap || '',
+      alamat_lengkap: ikmData.alamat_lengkap || '',
+      nama_usaha: ikmData.nama_usaha || '',
+      nomor_hp: ikmData.nomor_hp || '',
+      nomor_sertifikat: tkdn.nomor_sertifikat || '',
+      persentase_tkdn: tkdn.persentase_tkdn || '',
+      status_sertifikat: tkdn.status_sertifikat || 'Proses',
+      tahun_fasilitasi: tkdn.tahun_terbit || tkdn.tahun_fasilitasi || new Date().getFullYear(),
+      link_sertifikat: tkdn.link_sertifikat || '',
+      ikm_id: tkdn.ikm_id
     })
     setEditingId(tkdn.id)
     setShowForm(true)

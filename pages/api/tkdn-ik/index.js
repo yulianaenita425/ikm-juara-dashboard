@@ -26,47 +26,67 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { ikm_id, nomor_sertifikat, link_sertifikat, tahun_terbit } = req.body
+      const { ikm_id, nomor_sertifikat, persentase_tkdn, status_sertifikat, link_sertifikat, tahun_terbit } = req.body
 
       const { data, error } = await supabaseAdmin
         .from('tkdn_ik')
         .insert([{
           ikm_id,
           nomor_sertifikat,
+          persentase_tkdn: parseFloat(persentase_tkdn) || 0,
+          status_sertifikat: status_sertifikat || 'Proses',
           link_sertifikat,
           tahun_terbit
         }])
-        .select()
+        .select(`
+          *,
+          ikm_binaan (
+            nib,
+            nik,
+            nama_lengkap,
+            nama_usaha
+          )
+        `)
 
       if (error) throw error
 
-      res.status(201).json({ success: true, data })
+      res.status(201).json({ success: true, data: data[0] })
     } catch (error) {
       console.error('Error creating TKDN IK:', error)
-      res.status(500).json({ success: false, message: error.message })
+      res.status(500).json({ success: false, error: error.message })
     }
   } else if (req.method === 'PUT') {
     try {
-      const { id, ikm_id, nomor_sertifikat, link_sertifikat, tahun_terbit } = req.body
+      const { id, ikm_id, nomor_sertifikat, persentase_tkdn, status_sertifikat, link_sertifikat, tahun_terbit } = req.body
 
       const { data, error } = await supabaseAdmin
         .from('tkdn_ik')
         .update({
           ikm_id,
           nomor_sertifikat,
+          persentase_tkdn: parseFloat(persentase_tkdn) || 0,
+          status_sertifikat: status_sertifikat || 'Proses',
           link_sertifikat,
           tahun_terbit,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
-        .select()
+        .select(`
+          *,
+          ikm_binaan (
+            nib,
+            nik,
+            nama_lengkap,
+            nama_usaha
+          )
+        `)
 
       if (error) throw error
 
-      res.status(200).json({ success: true, data })
+      res.status(200).json({ success: true, data: data[0] })
     } catch (error) {
       console.error('Error updating TKDN IK:', error)
-      res.status(500).json({ success: false, message: error.message })
+      res.status(500).json({ success: false, error: error.message })
     }
   } else if (req.method === 'DELETE') {
     try {

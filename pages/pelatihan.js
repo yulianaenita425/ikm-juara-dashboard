@@ -138,6 +138,9 @@ export default function PelatihanPage() {
   const [jenisFormData, setJenisFormData] = useState({
     jenis_pelatihan: '',
     sub_kegiatan: '',
+    waktu_pelaksanaan: '',
+    tempat: '',
+    link_materi: '',
     tahun_pelaksanaan: new Date().getFullYear(),
     status: 'Aktif'
   })
@@ -179,25 +182,50 @@ export default function PelatihanPage() {
   }
 
   // Fungsi untuk mencari data IKM Binaan
-  const handleSearchIKM = () => {
+  const handleSearchIKM = async () => {
     const { search_key } = pesertaFormData
     if (!search_key) {
       alert('Masukkan NIB, NIK, atau Nama Lengkap untuk mencari data')
       return
     }
 
-    const found = ikmBinaanData.find(ikm => 
-      ikm.nib === search_key || 
-      ikm.nik === search_key || 
-      (ikm.nama_lengkap || '').toLowerCase().includes(search_key.toLowerCase())
-    )
+    try {
+      // Load IKM Binaan data from API
+      const response = await fetch('/api/ikm-binaan')
+      const result = await response.json()
+      
+      let ikmList = []
+      if (result.success) {
+        ikmList = result.data
+      } else {
+        ikmList = ikmBinaanData // fallback to dummy data
+      }
 
-    if (found) {
-      setPesertaFormData(prev => ({
-        ...prev,
-        nib: found.nib,
-        nik: found.nik,
-        nama_lengkap: found.nama_lengkap,
+      const found = ikmList.find(ikm => 
+        ikm.nib === search_key || 
+        ikm.nik === search_key || 
+        (ikm.nama_lengkap || '').toLowerCase().includes(search_key.toLowerCase())
+      )
+
+      if (found) {
+        setPesertaFormData(prev => ({
+          ...prev,
+          nib: found.nib,
+          nik: found.nik,
+          nama_lengkap: found.nama_lengkap,
+          alamat_lengkap: found.alamat_lengkap,
+          nama_usaha: found.nama_usaha,
+          nomor_hp: found.nomor_hp
+        }))
+        alert('Data IKM Binaan ditemukan dan berhasil dimuat!')
+      } else {
+        alert('Data IKM Binaan tidak ditemukan. Periksa kembali NIB, NIK, atau Nama Lengkap.')
+      }
+    } catch (error) {
+      console.error('Error searching IKM:', error)
+      alert('Gagal mencari data IKM Binaan')
+    }
+  }
         alamat_lengkap: found.alamat_lengkap,
         nama_usaha: found.nama_usaha,
         nomor_hp: found.nomor_hp
@@ -650,6 +678,48 @@ export default function PelatihanPage() {
                     placeholder="Contoh: Pemasaran Online dan Media Sosial"
                     required
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Waktu Pelaksanaan *
+                  </label>
+                  <input
+                    type="text"
+                    value={jenisFormData.waktu_pelaksanaan}
+                    onChange={(e) => setJenisFormData({...jenisFormData, waktu_pelaksanaan: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Contoh: 15-17 Januari 2024, 08:00-16:00 WIB"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tempat *
+                  </label>
+                  <input
+                    type="text"
+                    value={jenisFormData.tempat}
+                    onChange={(e) => setJenisFormData({...jenisFormData, tempat: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="Contoh: Aula Dinas Perindustrian Kota Madiun"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Link Materi Pelatihan
+                  </label>
+                  <input
+                    type="url"
+                    value={jenisFormData.link_materi}
+                    onChange={(e) => setJenisFormData({...jenisFormData, link_materi: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder="https://drive.google.com/..."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Link ke materi pelatihan di Google Drive (opsional)</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
