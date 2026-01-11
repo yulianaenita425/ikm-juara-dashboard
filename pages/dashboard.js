@@ -5,6 +5,7 @@ import AdminRoute from '../components/AdminRoute'
 import RealTimeIndicator from '../components/RealTimeIndicator'
 import AnimatedCounter from '../components/AnimatedCounter'
 import { useRealTimeStats } from '../hooks/useDashboardData'
+// Deployment: 2026-01-11T13:18:19.462Z - All fixes applied
 import { 
   BuildingOfficeIcon, 
   DocumentCheckIcon, 

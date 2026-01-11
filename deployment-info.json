@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-01-11T13:18:19.462Z",
+  "version": "0.1.1",
+  "features": [
+    "Jenis Pelatihan Integration",
+    "Form State Persistence",
+    "Laporan Year Range Extended",
+    "IKM Data Synchronization",
+    "Sertifikat Halal Page Fixed",
+    "TKDN Percentage Column Fixed"
+  ],
+  "status": "READY_FOR_DEPLOYMENT"
+}
