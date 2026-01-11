@@ -1,0 +1,16 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.suggest.autoImports": false,
+  "typescript.validate.enable": true,
+  "typescript.format.enable": true,
+  "files.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "app/**": true
+  },
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true,
+    "app/**": true
+  }
+}

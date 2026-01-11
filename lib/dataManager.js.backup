@@ -1,0 +1,242 @@
+// Data Manager untuk mengelola data aplikasi dengan localStorage dan Recycle Bin
+
+// Keys untuk localStorage
+const STORAGE_KEYS = {
+  IKM_BINAAN: 'ikmBinaanData',
+  HKI_MEREK: 'hkiMerekData',
+  SERTIFIKAT_HALAL: 'sertifikatHalalData',
+  TKDN_IK: 'tkdnIkData',
+  SIINAS: 'siinasData',
+  UJI_NILAI_GIZI: 'ujiNilaiGiziData',
+  KURASI_PRODUK: 'kurasiProdukData',
+  PELATIHAN: 'pelatihanData',
+  RECYCLE_BIN: 'recycleBinData'
+}
+
+// Utility functions
+export const generateId = () => {
+  return Date.now().toString() + Math.random().toString(36).substr(2, 9)
+}
+
+export const formatDate = (date = new Date()) => {
+  return date.toISOString()
+}
+
+// Generic data operations
+export const getData = (key) => {
+  if (typeof window === 'undefined') return []
+  try {
+    const data = localStorage.getItem(key)
+    return data ? JSON.parse(data) : []
+  } catch (error) {
+    console.error(`Error getting data for ${key}:`, error)
+    return []
+  }
+}
+
+export const setData = (key, data) => {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch (error) {
+    console.error(`Error setting data for ${key}:`, error)
+  }
+}
+
+// Helper function to get storage key by type
+const getStorageKeyByType = (type) => {
+  const typeMap = {
+    'IKM Binaan': STORAGE_KEYS.IKM_BINAAN,
+    'HKI Merek': STORAGE_KEYS.HKI_MEREK,
+    'Sertifikat Halal': STORAGE_KEYS.SERTIFIKAT_HALAL,
+    'TKDN IK': STORAGE_KEYS.TKDN_IK,
+    'SIINas': STORAGE_KEYS.SIINAS,
+    'Uji Nilai Gizi': STORAGE_KEYS.UJI_NILAI_GIZI,
+    'Kurasi Produk': STORAGE_KEYS.KURASI_PRODUK,
+    'Pelatihan': STORAGE_KEYS.PELATIHAN
+  }
+  return typeMap[type] || STORAGE_KEYS.IKM_BINAAN
+}
+
+// Recycle Bin operations
+export const moveToRecycleBin = (item, type) => {
+  const recycleBinData = getData(STORAGE_KEYS.RECYCLE_BIN)
+  const deletedItem = {
+    ...item,
+    originalType: type,
+    deletedAt: formatDate(),
+    recycleBinId: generateId()
+  }
+  
+  recycleBinData.push(deletedItem)
+  setData(STORAGE_KEYS.RECYCLE_BIN, recycleBinData)
+  
+  return deletedItem
+}
+
+export const restoreFromRecycleBin = (itemRecycleBinId) => {
+  const recycleBinData = getData(STORAGE_KEYS.RECYCLE_BIN)
+  const itemToRestore = recycleBinData.find(item => item.recycleBinId === itemRecycleBinId)
+  
+  if (!itemToRestore) {
+    throw new Error('Item not found in recycle bin')
+  }
+  
+  // Remove from recycle bin
+  const updatedRecycleBin = recycleBinData.filter(item => item.recycleBinId !== itemRecycleBinId)
+  setData(STORAGE_KEYS.RECYCLE_BIN, updatedRecycleBin)
+  
+  // Restore to original location
+  const originalData = getData(getStorageKeyByType(itemToRestore.originalType))
+  const { recycleBinId, originalType, deletedAt, ...restoredItem } = itemToRestore
+  originalData.push(restoredItem)
+  setData(getStorageKeyByType(itemToRestore.originalType), originalData)
+  
+  return restoredItem
+}
+
+export const permanentDelete = (itemRecycleBinId) => {
+  const recycleBinData = getData(STORAGE_KEYS.RECYCLE_BIN)
+  const updatedRecycleBin = recycleBinData.filter(item => item.recycleBinId !== itemRecycleBinId)
+  setData(STORAGE_KEYS.RECYCLE_BIN, updatedRecycleBin)
+}
+
+// IKM Binaan operations
+export const ikmBinaanOperations = {
+  getAll: () => getData(STORAGE_KEYS.IKM_BINAAN),
+  save: (data) => setData(STORAGE_KEYS.IKM_BINAAN, data),
+  add: (item) => {
+    const currentData = getData(STORAGE_KEYS.IKM_BINAAN)
+    const newItem = { ...item, id: generateId() }
+    currentData.push(newItem)
+    setData(STORAGE_KEYS.IKM_BINAAN, currentData)
+    return newItem
+  },
+  update: (id, updatedItem) => {
+    const currentData = getData(STORAGE_KEYS.IKM_BINAAN)
+    const index = currentData.findIndex(item => item.id === id)
+    if (index !== -1) {
+      currentData[index] = { ...currentData[index], ...updatedItem }
+      setData(STORAGE_KEYS.IKM_BINAAN, currentData)
+      return currentData[index]
+    }
+    return null
+  },
+  delete: (id) => {
+    const currentData = getData(STORAGE_KEYS.IKM_BINAAN)
+    const itemToDelete = currentData.find(item => item.id === id)
+    if (itemToDelete) {
+      moveToRecycleBin(itemToDelete, 'IKM Binaan')
+      const updatedData = currentData.filter(item => item.id !== id)
+      setData(STORAGE_KEYS.IKM_BINAAN, updatedData)
+      return itemToDelete
+    }
+    return null
+  }
+}
+
+// HKI Merek operations
+export const hkiMerekOperations = {
+  getAll: () => getData(STORAGE_KEYS.HKI_MEREK),
+  save: (data) => setData(STORAGE_KEYS.HKI_MEREK, data),
+  add: (item) => {
+    const currentData = getData(STORAGE_KEYS.HKI_MEREK)
+    const newItem = { ...item, id: generateId() }
+    currentData.push(newItem)
+    setData(STORAGE_KEYS.HKI_MEREK, currentData)
+    return newItem
+  },
+  update: (id, updatedItem) => {
+    const currentData = getData(STORAGE_KEYS.HKI_MEREK)
+    const index = currentData.findIndex(item => item.id === id)
+    if (index !== -1) {
+      currentData[index] = { ...currentData[index], ...updatedItem }
+      setData(STORAGE_KEYS.HKI_MEREK, currentData)
+      return currentData[index]
+    }
+    return null
+  },
+  delete: (id) => {
+    const currentData = getData(STORAGE_KEYS.HKI_MEREK)
+    const itemToDelete = currentData.find(item => item.id === id)
+    if (itemToDelete) {
+      moveToRecycleBin(itemToDelete, 'HKI Merek')
+      const updatedData = currentData.filter(item => item.id !== id)
+      setData(STORAGE_KEYS.HKI_MEREK, updatedData)
+      return itemToDelete
+    }
+    return null
+  }
+}
+
+// Pelatihan operations
+export const pelatihanOperations = {
+  getAll: () => getData(STORAGE_KEYS.PELATIHAN),
+  save: (data) => setData(STORAGE_KEYS.PELATIHAN, data),
+  add: (item) => {
+    const currentData = getData(STORAGE_KEYS.PELATIHAN)
+    const newItem = { ...item, id: generateId() }
+    currentData.push(newItem)
+    setData(STORAGE_KEYS.PELATIHAN, currentData)
+    return newItem
+  },
+  update: (id, updatedItem) => {
+    const currentData = getData(STORAGE_KEYS.PELATIHAN)
+    const index = currentData.findIndex(item => item.id === id)
+    if (index !== -1) {
+      currentData[index] = { ...currentData[index], ...updatedItem }
+      setData(STORAGE_KEYS.PELATIHAN, currentData)
+      return currentData[index]
+    }
+    return null
+  },
+  delete: (id) => {
+    const currentData = getData(STORAGE_KEYS.PELATIHAN)
+    const itemToDelete = currentData.find(item => item.id === id)
+    if (itemToDelete) {
+      moveToRecycleBin(itemToDelete, 'Pelatihan')
+      const updatedData = currentData.filter(item => item.id !== id)
+      setData(STORAGE_KEYS.PELATIHAN, updatedData)
+      return itemToDelete
+    }
+    return null
+  }
+}
+
+// Initialize default data if not exists
+export const initializeDefaultData = () => {
+  // Default IKM Binaan data
+  const defaultIkmData = [
+    {
+      id: '1',
+      nib: '1234567890123',
+      nik: '3573012345678901',
+      nama_lengkap: 'Budi Santoso',
+      alamat_lengkap: 'Jl. Merdeka No. 123, Kelurahan Manguharjo, Kota Madiun',
+      nama_usaha: 'CV. Sumber Rejeki',
+      nomor_hp: '081234567890',
+      database_indicator: true
+    },
+    {
+      id: '2',
+      nib: '2345678901234',
+      nik: '3573012345678902',
+      nama_lengkap: 'Siti Aminah',
+      alamat_lengkap: 'Jl. Pahlawan No. 456, Kelurahan Taman, Kota Madiun',
+      nama_usaha: 'UD. Berkah Jaya',
+      nomor_hp: '081234567891',
+      database_indicator: true
+    }
+  ]
+
+  // Initialize if empty
+  if (getData(STORAGE_KEYS.IKM_BINAAN).length === 0) {
+    setData(STORAGE_KEYS.IKM_BINAAN, defaultIkmData)
+  }
+  
+  if (getData(STORAGE_KEYS.RECYCLE_BIN).length === 0) {
+    setData(STORAGE_KEYS.RECYCLE_BIN, [])
+  }
+}
+
+export { STORAGE_KEYS }
