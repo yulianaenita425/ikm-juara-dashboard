@@ -43,13 +43,18 @@ export default function IKMBinaanPage() {
       const response = await fetch('/api/ikm-binaan')
       const result = await response.json()
       
-      if (result.success) {
+      if (result.success && result.data) {
         setIkmList(result.data)
+        console.log(`✅ IKM Binaan loaded: ${result.data.length} records (${result.source || 'unknown'} source)`)
       } else {
         console.error('Error loading IKM data:', result.error)
+        // Set empty array but don't show error to user
+        setIkmList([])
       }
     } catch (error) {
       console.error('Error loading IKM data:', error)
+      // Set empty array but don't show error to user
+      setIkmList([])
     } finally {
       setLoading(false)
     }
